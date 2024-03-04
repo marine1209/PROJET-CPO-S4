@@ -6,6 +6,7 @@ export default class Course extends Phaser.scene {
     }
 
 preload (){
+  //chargement des images
    this.preload.image ("tuile_terre1", "src/assets/image_course/1.png");
    this.preload.image ("tuile_terre2", "src/assets/image_course/2.png");
    this.preload.image ("tuile_terre3", "src/assets/image_course/3.png");
@@ -40,6 +41,8 @@ create(){
     const calque2 = map.createDynamicLayer("terre", [tileset1,tileset7,tileset8,tileset9,tileset10,tileset2]);
     const calque3 = map.createDynamicLayer("ravaitaillements", [tileset6]);
     const calque4 = map.createDynamicLayer ("arbres et buissons", [tilset11, tileset4]);
+    //creation des colisions 
+    calque2.setCollisionByProperty({estSolide : true});
     //creation des animations pour le personnage
     this.anims.create({
         key: "anim_tourne_gauche", // key est le nom de l'animation : doit etre unique poru la scene.
@@ -63,6 +66,23 @@ create(){
    
 }
 update (){
+  if (gameOver) {
+    return;
+  }
+
+  if (clavier.right.isDown) {
+    player.setVelocityX(160);
+    player.anims.play('anim_tourne_droite', true);
+  }else if (clavier.left.isDown) {
+    player.setVelocityX(-160);
+    player.anims.play('anim_tourne_gauche', true);
+  }else {
+    player.setVelocityX(0);
+    player.anims.play('anim_face', true);
+  } 
+
+  if (clavier.space.isDown && player.body.touching.down) {
+  player.setVelocityY(-330);}
 
 }
 
