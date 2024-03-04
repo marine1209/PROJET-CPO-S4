@@ -4,11 +4,11 @@ export default class menu extends Phaser.Scene {
     }
     //on charge les images
     preload() {
-      this.load.image("menu_fond", "src/assets/fondMenu.png");
-      this.load.image("imageBoutonPlay", "src/assets/black_play.png");
-      this.load.image("imageBoutonConfig", "src/assets/black_config.png"); 
-      this.load.image("imageMusiqueOn", "src/assets/black_musicOn.png");
-      this.load.image("imageMusiqueOff", "src/assets/black_MusicOff.png");
+      this.load.image("menu_fond", "src/assets/image menu/fondMenu.png");
+      this.load.image("imageBoutonPlay", "src/assets/image menu/black_play.png");
+      this.load.image("imageBoutonConfig", "src/assets/image menu/black_config.png"); 
+      this.load.image("imageMusiqueOn", "src/assets/image menu/black_musicOn.png");
+      this.load.image("imageMusiqueOff", "src/assets/image menu/black_MusicOff.png");
 
     }
   

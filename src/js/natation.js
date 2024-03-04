@@ -25,7 +25,6 @@ preload() {
       frameWidth: 48,
       frameHeight: 72
     });
-
     // chargement tuiles de jeu
     this.load.image("tuiles_natation", "src/assets/image_natation/terrain_atlas.png");
     this.load.image("tuiles_natation2", "src/assets/image_natation/base_out_atlas.png");

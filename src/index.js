@@ -1,5 +1,5 @@
-import Course from "/src/js/selection.js"; 
-import natation from "/src/js/niveau1.js";
+import Course from "/src/js/Course.js"; 
+import natation from "/src/js/natation.js";
 import menu from "/src/js/menu.js";
 
 var config = {
@@ -18,7 +18,7 @@ var config = {
     }
   
   },
-  scene: [menu, natation, Course] 
+  scene: [menu, Course, natation] 
   
 };
 
