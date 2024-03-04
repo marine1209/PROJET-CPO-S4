@@ -2,7 +2,7 @@ var player; //designe le sprite du joueur
 var clavier; //pour la gestion du clavier
 var groupe_pyrahnas; // contient tous les sprite étoiles
 
-export default class nnatation2 extends Phaser.Scene {
+export default class natation extends Phaser.Scene {
     // constructeur de la classe
     constructor() {
       super({
@@ -58,14 +58,20 @@ this.player.setDepth(50);
 
 this.add.image(800,500,"img_pyrahna");
 groupe_pyrahnas=this.physics.add.groupe();
-this.physics.add.collider(groupe_pyrahnas, claque_plateforme);
+this.physics.add.collider(groupe_pyrahnas, calque_plateforme);
 
 this.physics.add.collider(player, groupe_pyrahnas, chocAvecPyrahna, null, this);
-for (var i = 0; i < 10; i++) {
+var un_pyrahna = groupe_pyrahnas.create(x, 16, "img_pyrhana");
+    un_pyrahna.setBounce(1);
+    un_pyrahna.setCollideWorldBounds(true);
+    un_pyrahna.setVelocity(Phaser.Math.Between(-200, 200), 20);
+    un_pyrahna.allowGravity = false;
+/*for (var i = 0; i < 3; i++) {
     var coordX = 70 + 70 * i;
-    groupe_etoiles.create(coordX, 10, "img_etoile");
-    this.physics.add.collider(groupe_etoiles, groupe_plateformes); 
+    groupe_pyrahnas.create(coordX, 10, "img_etoile");
+    this.physics.add.collider(groupe_pyrahnas, calque_plateforme); 
   } 
+  */
 /** ANIMATIONS **/
   // dans cette partie, on crée les animations, à partir des spritesheet
   // chaque animation est une succession de frame à vitesse de défilement défini
@@ -117,7 +123,7 @@ for (var i = 0; i < 10; i++) {
     );
 
     // chargement du calque calque_plateformes
-    const claque_plateforme = carte_natation.createLayer(
+    const calque_plateforme = carte_natation.createLayer(
         "claque_plateforme",
         tileset
       );  
