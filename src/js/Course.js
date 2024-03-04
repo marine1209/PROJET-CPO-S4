@@ -1,4 +1,7 @@
+var player; //designe le sprite du joueur
+var clavier; //pour la gestion du clavier
 export default class Course extends Phaser.Scene {
+
     constructor(){
         super ({
             key : "course"
@@ -16,7 +19,7 @@ preload (){
    this.load.image ("tuile_terre15", "src/assets/image_course/15.png");
    this.load.image ("eau", "src/assets/image_course/17.png");
    this.load.image ("background", "src/assets/image_course/BG.png");
-   this.load.image ("buisson1", "src/assets/image_course/Bush (1).png");
+   this.load.image ("buisson1", "src/assets/image_course/Bush.png");
    this.load.image ("pierre", "src/assets/image_course/Stone.png");
    this.load.image ("arbre1", "src/assets/image_course/Tree_2.png");
    this.load.tilemapTiledJSON ("carte_course", "src/assets/image_course/MAP COURSE.tmj");
@@ -32,21 +35,22 @@ create(){
     const tileset1 = map.addTilesetImage ("13", "tuile_terre13");
     const tileset2 = map.addTilesetImage ("15", "tuile_terre15");
     const tileset3 = map.addTilesetImage ("BG", "background");
-    const tileset4 = map.addTilesetImage ("Bush(1)", "buisson1");
-    const tileset5 = map.addTilesetImage ("eau", "eau");
+    const tileset4 = map.addTilesetImage ("Bush", "buisson1");
+    const tileset5 = map.addTilesetImage ("17", "eau");
     const tileset6 = map.addTilesetImage ("Stone", "pierre");
     const tileset7 = map.addTilesetImage ("terre", "tuile_terre2");
     const tileset8 = map.addTilesetImage ("terre1", "tuile_terre1");
-    const tileset9 = map.addTilesetImage ("terre2", "tuile_terre2");
-    const tileset10 = map.addTilesetImage ("terre3", "tuile_terre3");
+    const tileset9 = map.addTilesetImage ("terre2", "tuile_terre3");
+    const tileset10 = map.addTilesetImage ("terre3", "tuile_terre5");
     const tileset11 = map.addTilesetImage ("Tree_2", "arbre1");
-    const calque1 = map.createDynamicLayer("arrière plan", [tileset3]);
-    const calque2 = map.createDynamicLayer("terre", [tileset1,tileset7,tileset8,tileset9,tileset10,tileset2]);
-    const calque3 = map.createDynamicLayer("ravaitaillements", [tileset6]);
-    const calque4 = map.createDynamicLayer ("arbres et buissons", [tilset11, tileset4]);
+    const calque1 = map.createLayer("arrière plan", [tileset3]);
+    const calque2 = map.createLayer("terre", [tileset1,tileset7,tileset8,tileset9,tileset10,tileset2,tileset5]);
+    const calque3 = map.createLayer("ravaitaillements", [tileset6]);
+    const calque4 = map.createLayer ("arbres et buissons", [tileset11, tileset4]);
     //creation des colisions 
     calque2.setCollisionByProperty({estSolide : true});
     //creation des animations pour le personnage
+    player = this.physics.add.sprite(100, 450, "img_perso");
     this.anims.create({
         key: "anim_tourne_gauche", // key est le nom de l'animation : doit etre unique poru la scene.
         frames: this.anims.generateFrameNumbers("img_perso", { start: 15, end: 17 }), // on prend toutes les frames de img perso numerotées de 0 à 3
@@ -66,13 +70,12 @@ create(){
         frameRate: 20
       });
 
-   this.physics.add.collider (players, calque2);
+   this.physics.add.collider (player, calque2);
+     /** CREATION DU CLAVIER **/  
+  clavier = this.input.keyboard.createCursorKeys();
 }
 update (){
-  if (gameOver) {
-    return;
-  }
-
+  
   if (clavier.right.isDown) {
     player.setVelocityX(160);
     player.anims.play('anim_tourne_droite', true);
