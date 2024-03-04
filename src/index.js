@@ -18,9 +18,9 @@ var config = {
     }
   
   },
-  scene: [menu, Course, natation] 
+  scene: [menu, natation, Course] 
   
 };
 
 var game = new Phaser.Game(config);
-game.scene.start("course"); 
+game.scene.start("menu"); 

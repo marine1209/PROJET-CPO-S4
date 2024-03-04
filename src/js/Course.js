@@ -29,6 +29,7 @@ preload (){
 create(){
     //création de la map
     const map = this.add.tilemap("carte_course") ; 
+    
     const tileset1 = map.addTilesetImage ("13", "tuile_terre13");
     const tileset2 = map.addTilesetImage ("15", "tuile_terre15");
     const tileset3 = map.addTilesetImage ("BG", "background");
@@ -44,6 +45,7 @@ create(){
     const calque2 = map.createDynamicLayer("terre", [tileset1,tileset7,tileset8,tileset9,tileset10,tileset2]);
     const calque3 = map.createDynamicLayer("ravaitaillements", [tileset6]);
     const calque4 = map.createDynamicLayer ("arbres et buissons", [tilset11, tileset4]);
+    
     //creation des colisions 
     calque2.setCollisionByProperty({estSolide : true});
     //creation des animations pour le personnage
