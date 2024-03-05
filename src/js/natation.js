@@ -1,6 +1,6 @@
 var player; //designe le sprite du joueur
 var clavier; //pour la gestion du clavier
-var groupe_pyrahnas; // contient tous les sprite étoiles
+var groupe_pyrhanas; // contient tous les sprite étoiles
 var pyrhana;
 
 export default class natation extends Phaser.Scene {
@@ -21,7 +21,8 @@ export default class natation extends Phaser.Scene {
  */
 preload() {
 
-    this.load.image("img_pyrhana", "src/assets/img_natation/pyranha.png"); 
+    this.load.image("img_pyrhana", "src/assets/image_natation/pyrhana.png"); 
+    this.load.image("img_livre","src/assets/image_natation/book.png");
     this.load.spritesheet("img_perso", "src/assets/sportif.png", {
       frameWidth: 48,
       frameHeight: 72
@@ -61,7 +62,16 @@ preload() {
  // chargement du calque calque_plateformes
  const calque_plateforme = carte_natation.createLayer("calque_plateforme",tileset);  
 
+ this.add.image(400,300,"img_livre").bringToTop();
+
 /** CREATION DU PERSONNAGE  ET ENNEMIS **/
+
+groupe_pyrhanas= this.physics.add.group();
+groupe_pyrhanas.create(300, 584, "img_pyrhana");
+groupe_pyrhanas.create(600, 584, "img_pyrhana"); 
+groupe_pyrhanas.create(50, 300, "img_pyrhana");
+this.physics.add.overlap( groupe_pyrhanas, deplacementPyrhana, null, this);
+
 // On créée un nouveau personnage : player et on le positionne
 player = this.physics.add.sprite(100, 450, "img_perso")
 //  propriétées physiqyes de l'objet player :
@@ -69,7 +79,7 @@ player.setBounce(0.2); // on donne un petit coefficient de rebond
 player.setCollideWorldBounds(true); // le player se cognera contre les bords du monde
 player.setDepth(50);
 
-pyrhana=this.physics.add.image(800,500,"img_pyrhana");
+
 
 /** ANIMATIONS **/
   // dans cette partie, on crée les animations, à partir des spritesheet
@@ -106,7 +116,7 @@ pyrhana=this.physics.add.image(800,500,"img_pyrhana");
  
     // ajout d'une collision entre le joueur et le calque plateformes
     this.physics.add.collider(player, calque_plateforme); 
-    this.physics.add.collider(pyrhana, calque_plateforme);
+    this.physics.add.collider(groupe_pyrhanas, calque_plateforme);
     
     // redimentionnement du monde avec les dimensions calculées via tiled
     this.physics.world.setBounds(0, 0, 3200, 640);
@@ -140,11 +150,27 @@ update() {
       player.setVelocityY(-330);
       player.anims.play('anim_face', true);
     }
+  
+ 
   }
 
 
 }
+function deplacementPyrhana(un_pyrahna){
+  // Générer un mouvement aléatoire pour la position
+  var randomX = Phaser.Math.Between(0, 800);
+  var randomY = Phaser.Math.Between(0, 600);
 
+  // Appliquer le mouvement aléatoire à la position de l'objet
+  groupe_pyrhanas.x += randomX;
+  groupe_pyrhanas.y += randomY;
+
+  // Générer une rotation aléatoire
+  var randomRotation = Phaser.Math.Between(-0.02, 0.02);
+
+  // Appliquer la rotation aléatoire à l'objet
+  groupe_pyrhanas.rotation += randomRotation;
+}
 function chocAvecPyrahna(un_player, un_pyrahna) {
     this.physics.pause();
     player.setTint(0xff0000);
