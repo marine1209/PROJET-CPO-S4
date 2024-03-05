@@ -9,7 +9,7 @@ var coeur3;
 var monTimer;
 var groupe_bouteilles;
 var gameOver = false;
-var looser;
+
 
 export default class natation extends Phaser.Scene {
     // constructeur de la classe
@@ -30,7 +30,8 @@ export default class natation extends Phaser.Scene {
 preload() {
     this.load.image("img_coeur_plein", "src/assets/coeur_plein.png")
     this.load.image("img_coeur_vide", "src/assets/coeur_vide.png")
-    this.load.image('bouteille', "src/assets/Water Bottle.png")
+    this.load.image("bouteille", "src/assets/Water Bottle.png")
+    this.load.image("level_completed", "src/assets/finished_line.png")
     this.load.image ('img_gameOver', "src/assets/game_over.png")
     this.load.image("img_boutonFerme", "src/assets/image_natation/closed_button.png"); 
     this.load.image("img_pyrhana", "src/assets/image_natation/pyrhana.png"); 
@@ -75,7 +76,7 @@ preload() {
  const calque_plateforme = carte_natation.createLayer("calque_plateforme",tileset);  
 
  calque_plateforme.setCollisionByProperty({ estSolide: true });
- 
+ /*
  var imageOn=this.add.image(400,300,"img_livre");
  var buttonOn=this.add.image(750,500,"img_boutonFerme");
  buttonOn.setInteractive();
@@ -86,7 +87,7 @@ preload() {
   imageOn.visible=false;
 
 });
-
+*/
 /** ANIMATIONS **/
   // dans cette partie, on crée les animations, à partir des spritesheet
   // chaque animation est une succession de frame à vitesse de défilement défini
@@ -95,13 +96,12 @@ preload() {
   // utilisation de la propriété estSolide
 
 groupe_bouteilles = this.physics.add.group();
-  this.physics.add.collider(groupe_bouteilles, calque_plateforme);
-  calque_plateforme.forEachTile(tile => { // Parcours de chaque tuile de la couche "ravataillements"
-    if (tile.properties.ravitaillement == true) {// Vérifier si la tuile a la propriété "ravitaillement" définie
-      const coord = calque_plateforme.tileToWorldXY(tile.x, tile.y); // Position de la tuile sur la map
-      groupe_bouteilles.create(coord.x + 50, coord.y + 50, 'bouteille'); // Ajout de l'image à cet emplacement
-    }
-  });    
+this.physics.add.collider(groupe_bouteilles, calque_plateforme);
+groupe_bouteilles.create(200, 0, "bouteille");
+groupe_bouteilles.create(1230, 500, "bouteille");
+groupe_bouteilles.create(1620, 530, "bouteille");
+
+
 /** CREATION DU PERSONNAGE  ET ENNEMIS **/
 
 // On créée un nouveau personnage : player et on le positionne
@@ -112,7 +112,7 @@ player.setCollideWorldBounds(true); // le player se cognera contre les bords du 
 player.setDepth(50);
 groupe_pyrhanas= this.physics.add.group();
 this.physics.add.collider(player, calque_plateforme);
-//this.physics.add.collider(player, calque_plateforme); 
+
 
 //ajout des bouteilles d'eau sur les endroits où il y a la propriété ravitaillement 
 
@@ -136,7 +136,7 @@ this.physics.add.collider(player, calque_plateforme);
   });
   
 
-for (var i=0;i<3; i++){
+for (var i=0;i<7; i++){
   var coordX=Phaser.Math.Between(0,3200);
   var coordY=Phaser.Math.Between(0,640);
   var un_pyrhana=groupe_pyrhanas.create(coordX, coordY, "img_pyrhana");
@@ -166,10 +166,10 @@ this.physics.add.collider(groupe_pyrhanas,calque_plateforme);
   
 
   //creation des vies 
-  coeur1 = this.add.image(40, 70, 'img_coeur_plein');
-  coeur2 = this.add.image(120, 70, 'img_coeur_plein');
-  coeur3 = this.add.image(200, 70, 'img_coeur_plein');
-  looser=this.add.image("img_gameOver");
+  coeur1 = this.add.image(40, 70, 'img_coeur_plein').setScrollFactor(0);
+  coeur2 = this.add.image(120, 70, 'img_coeur_plein').setScrollFactor(0);;
+  coeur3 = this.add.image(200, 70, 'img_coeur_plein').setScrollFactor(0);;
+  var fin=this.physics.add.staticSprite(3000,320,"level_completed");
   
  }
 /***********************************************************************/
@@ -177,17 +177,6 @@ this.physics.add.collider(groupe_pyrhanas,calque_plateforme);
 /***********************************************************************/
 
 update() {
-  // Mettre à jour la position des cœurs par rapport à la caméra
-  const cameraScrollX = this.cameras.main.scrollX;
-  const cameraScrollY = this.cameras.main.scrollY;
-
-  // Positionner les cœurs sur l'écran en fonction des coordonnées de la caméra
-  coeur1.x = cameraScrollX + 40;
-  coeur1.y = cameraScrollY + 70;
-  coeur2.x = cameraScrollX + 120;
-  coeur2.y = cameraScrollY + 70;
-  coeur3.x = cameraScrollX + 200;
-  coeur3.y = cameraScrollY + 70;
 
     if (clavier.right.isDown) {
       player.setVelocityX(160);
@@ -203,27 +192,37 @@ update() {
       player.setVelocityY(-300);
       player.anims.play('anim_face', true);
     }
-  //timer pour les coeurs 
+    if (Phaser.Input.Keyboard.JustDown(clavier.space) == true) {
+        if (this.physics.overlap(player, this.fin)) this.scene.switch("course");
+      }
+
+  
+    //timer pour les coeurs 
   this.physics.add.overlap(player, groupe_bouteilles, this.ramasserBouteille, null, this);
   this.physics.add.overlap(player, groupe_pyrhanas, this.chocAvecPyrahna, null, this);
 
-  if (vies==0) {
-    return looser;
-  }
  
+  if (gameOver) {
+    console.log("gameover");
+    this.gameOver();
+    return ;
+  }
+
+  
 }
 
-
+/*
 chocAvecBombe(un_player, une_bombe) {
   this.physics.pause();
   player.setTint(0xff0000);
   player.anims.play("anim_face");
   gameOver = true;
-}
+}*/
 
 chocAvecPyrahna(player, pyrahna) {
   pyrahna.disableBody(true, true);
   this.perdreUneVie();
+
   }
 
 perdreUneVie() {
@@ -236,27 +235,22 @@ perdreUneVie() {
         coeur2.setTexture('img_coeur_vide');
       } else if (vies == 0) {
         coeur1.setTexture('img_coeur_vide');
-        
+        gameOver = true;
+        console.log(gameOver)
       }
     }
+    console.log(vies)
   }
 
+  gameOver() {
+    // Afficher l'image de game over
+    const gameOverImage = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 2, 'img_gameOver').setScrollFactor(0);
+    gameOverImage.setOrigin(0.5);
+  }
 
   ramasserBouteille(un_player, une_bouteille) {
     une_bouteille.disableBody(true, true);
     this.GagnerUneVie();
-    var x;
-    if (player.x < 400) {
-      x = Phaser.Math.Between(400, 800);
-    } else {
-      x = Phaser.Math.Between(0, 400);
-    }
-
-    var une_bombe = groupe_bombes.create(x, 16, "img_bombe");
-    une_bombe.setBounce(1);
-    une_bombe.setCollideWorldBounds(true);
-    une_bombe.setVelocity(Phaser.Math.Between(-200, 200), 20);
-    une_bombe.allowGravity = false;
   }
 
   GagnerUneVie() {
@@ -270,3 +264,4 @@ perdreUneVie() {
     }
   }
 }
+
