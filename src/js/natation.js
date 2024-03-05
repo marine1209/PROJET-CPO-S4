@@ -29,6 +29,7 @@ export default class natation extends Phaser.Scene {
  * On y trouve surtout le chargement des assets (images, son ..)
  */
 preload() {
+    
     this.load.image("img_coeur_plein", "src/assets/coeur_plein.png")
     this.load.image("img_coeur_vide", "src/assets/coeur_vide.png")
     this.load.image("bouteille", "src/assets/Water Bottle.png")

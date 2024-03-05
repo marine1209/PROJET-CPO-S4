@@ -12,6 +12,13 @@ export default class velo extends Phaser.Scene {
 
 preload (){
   //chargement des images
+  this.load.image("img_BluePlatform", "src/assets/image_velo/blue_platform.png");
+  this.load.image("img_levier", "src/assets/image_velo/levier.png");
+  this.load.image("img_selle", "src/assets/image_velo/selle.png");
+  this.load.image("img_guidon", "src/assets/image_velo/guidon.png");
+  this.load.image("img_roueAR", "src/assets/image_velo/roue_arriere.png");
+  this.load.image("img_roueAV", "src/assets/image_velo/roue_avant.png");
+  this.load.image("img_pedale", "src/assets/image_velo/pedale.png");
   this.load.image("tuile_terre1", "src/assets/image_course/1.png");
   this.load.image("tuile_terre2", "src/assets/image_course/2.png");
   this.load.image("tuile_terre3", "src/assets/image_course/3.png");
