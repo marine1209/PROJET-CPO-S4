@@ -16,6 +16,7 @@ export default class Course extends Phaser.Scene {
       key: "course"
     });
     this.groupe_chaussures;
+    this.calque2;
   }
 
   preload() {
@@ -62,15 +63,15 @@ export default class Course extends Phaser.Scene {
     const tileset10 = map.addTilesetImage("terre3", "tuile_terre5");
     const tileset11 = map.addTilesetImage("Tree_2", "arbre1");
     const calque1 = map.createLayer("arrière plan", [tileset3]);
-    const calque2 = map.createLayer("terre", [tileset1, tileset7, tileset8, tileset9, tileset10, tileset2, tileset5]);
+    this.calque2 = map.createLayer("terre", [tileset1, tileset7, tileset8, tileset9, tileset10, tileset2, tileset5]);
     const calque3 = map.createLayer("arbres et buissons", [tileset11, tileset4, tileset6]);
 
     //creation des colisions 
-    calque2.setCollisionByProperty({ estSolide: true });
+    this.calque2.setCollisionByProperty({ estSolide: true });
 
     //ajout des bouteilles d'eau sur les endroits où il y a la propriété ravitaillement 
     groupe_bouteilles = this.physics.add.group();
-    this.physics.add.collider(groupe_bouteilles, calque2);
+    this.physics.add.collider(groupe_bouteilles, this.calque2);
     calque3.forEachTile(tile => { // Parcours de chaque tuile de la couche "ravataillements"
       if (tile.properties.ravitaillement == true) {// Vérifier si la tuile a la propriété "ravitaillement" définie
         const coord = calque3.tileToWorldXY(tile.x, tile.y); // Position de la tuile sur la map
@@ -81,6 +82,8 @@ export default class Course extends Phaser.Scene {
 
     //creation des animations pour le personnage
     player = this.physics.add.sprite(100, 450, "img_perso");
+    player.setCollideWorldBounds(true);
+    player.body.onWorldBounds = true;
     this.anims.create({
       key: "anim_tourne_gauche", // key est le nom de l'animation : doit etre unique poru la scene.
       frames: this.anims.generateFrameNumbers("img_perso", { start: 15, end: 17 }), // on prend toutes les frames de img perso numerotées de 15 à 17
@@ -100,8 +103,8 @@ export default class Course extends Phaser.Scene {
       frameRate: 20
     });
     player.maxVX = 150;
-    player.maxVY = 200;
-    this.physics.add.collider(player, calque2);
+    player.maxVY = 400;
+    this.physics.add.collider(player, this.calque2);
     // redimentionnement du monde avec les dimensions calculées via tiled
     this.physics.world.setBounds(0, 0, 3200, 640);
     //  ajout du champs de la caméra de taille identique à celle du monde
@@ -113,31 +116,21 @@ export default class Course extends Phaser.Scene {
     clavier = this.input.keyboard.createCursorKeys();
 
     //creation des vies 
-    coeur1 = this.add.image(40, 70, 'img_coeur_plein');
-    coeur2 = this.add.image(120, 70, 'img_coeur_plein');
-    coeur3 = this.add.image(200, 70, 'img_coeur_plein');
-    player.body.onWorldBounds = true;
+    coeur1 = this.add.image(40, 70, 'img_coeur_plein').setScrollFactor(0);
+    coeur2 = this.add.image(120, 70, 'img_coeur_plein').setScrollFactor(0);
+    coeur3 = this.add.image(200, 70, 'img_coeur_plein').setScrollFactor(0);
+    //player.body.onWorldBounds = true;
 
     this.monTimer = this.time.addEvent({ delay: 5000, callback: this.perdreUneVie, callbackScope: this, loop: true });
     // création des chaussures
     this.groupe_chaussures = this.physics.add.group();
-    this.physics.add.collider(this.groupe_chaussures, calque2);
+    this.physics.add.collider(this.groupe_chaussures, this.calque2);
     const basket = this.groupe_chaussures.create(100, 400, 'img_basket');
     const talon = this.groupe_chaussures.create(200, 400, 'img_talon');
     const claquette = this.groupe_chaussures.create(300, 400, 'img_claquette');
   }
   update() {
-    // Mettre à jour la position des cœurs par rapport à la caméra
-    const cameraScrollX = this.cameras.main.scrollX;
-    const cameraScrollY = this.cameras.main.scrollY;
-
-    // Positionner les cœurs sur l'écran en fonction des coordonnées de la caméra
-    coeur1.x = cameraScrollX + 40;
-    coeur1.y = cameraScrollY + 70;
-    coeur2.x = cameraScrollX + 120;
-    coeur2.y = cameraScrollY + 70;
-    coeur3.x = cameraScrollX + 200;
-    coeur3.y = cameraScrollY + 70;
+ 
 
     //position du joueur en fonction des touches cliquées
     if (clavier.right.isDown) {
@@ -163,15 +156,18 @@ export default class Course extends Phaser.Scene {
               this.ramasserChaussure(player, chaussure);
           }
       });
-    //timer pour les coeurs 
+    }
+   //ramasser les bouteilles
     this.physics.add.overlap(player, groupe_bouteilles, this.ramasserBouteille, null, this);
-    /*
+
+    this.joueurNoye();
+    
         if (gameOver) {
           console.log("gameover");
           this.gameOver();
           return ;
-        }*/
-  }
+        }
+  
   }
   perdreUneVie() {
     console.log(this.monTimer)
@@ -208,7 +204,7 @@ export default class Course extends Phaser.Scene {
   }
   gameOver() {
     // Afficher l'image de game over
-    const gameOverImage = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 2, 'img_gameOver');
+    const gameOverImage = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 2, 'img_gameOver').setScrollFactor(0);
     gameOverImage.setOrigin(0.5);
   }
 
@@ -224,18 +220,22 @@ export default class Course extends Phaser.Scene {
     ramassageEnCours=false; 
   }
   recupererClaquette() {
-    console.log("coucou");
-    player.maxVX= 60;
-    console.log("ca marche");
+    player.maxVY= -500;
     
   }
   recupererTalon() {
-
+    player.maxVX= 60;
   }
   recupererBasket() {
-
+   player.maxVX = 600; 
   }
-
+  joueurNoye(){
+    const tile = this.calque2.getTileAtWorldXY(player.x, player.y);
+    if (tile && tile.properties.Eau === true) {
+        gameOver=true; // Si le joueur est sur une tuile "noyée"
+    }
+  }
+  
 
 
 }
