@@ -4144,6 +4144,11 @@
                  "name":"estSolide",
                  "type":"bool",
                  "value":false
+                }, 
+                {
+                 "name":"ravitaillement",
+                 "type":"bool",
+                 "value":true
                 }]
         }, 
         {
@@ -8039,6 +8044,11 @@
          "properties":[
                 {
                  "name":"estSolide",
+                 "type":"bool",
+                 "value":true
+                }, 
+                {
+                 "name":"ravitaillement",
                  "type":"bool",
                  "value":true
                 }]

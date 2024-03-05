@@ -2,6 +2,14 @@ var player; //designe le sprite du joueur
 var clavier; //pour la gestion du clavier
 var groupe_pyrhanas; // contient tous les sprite étoiles
 var pyrhana;
+var vies = 3; //pour la gestion des vies du joueur
+var coeur1;
+var coeur2;
+var coeur3;
+var monTimer;
+var groupe_bouteilles;
+var gameOver = false;
+
 
 export default class natation extends Phaser.Scene {
     // constructeur de la classe
@@ -20,6 +28,11 @@ export default class natation extends Phaser.Scene {
  * On y trouve surtout le chargement des assets (images, son ..)
  */
 preload() {
+    this.load.image("img_coeur_plein", "src/assets/coeur_plein.png")
+    this.load.image("img_coeur_vide", "src/assets/coeur_vide.png")
+    this.load.image("bouteille", "src/assets/Water Bottle.png")
+    this.load.image("level_completed", "src/assets/finished_line.png")
+    this.load.image ('img_gameOver', "src/assets/game_over.png")
     this.load.image("img_boutonFerme", "src/assets/image_natation/closed_button.png"); 
     this.load.image("img_pyrhana", "src/assets/image_natation/pyrhana.png"); 
     this.load.image("img_livre","src/assets/image_natation/book.png");
@@ -62,6 +75,8 @@ preload() {
  // chargement du calque calque_plateformes
  const calque_plateforme = carte_natation.createLayer("calque_plateforme",tileset);  
 
+ calque_plateforme.setCollisionByProperty({ estSolide: true });
+ /*
  var imageOn=this.add.image(400,300,"img_livre");
  var buttonOn=this.add.image(750,500,"img_boutonFerme");
  buttonOn.setInteractive();
@@ -72,13 +87,22 @@ preload() {
   imageOn.visible=false;
 
 });
-/** CREATION DU PERSONNAGE  ET ENNEMIS **/
+*/
+/** ANIMATIONS **/
+  // dans cette partie, on crée les animations, à partir des spritesheet
+  // chaque animation est une succession de frame à vitesse de défilement défini
+  // une animation doit avoir un nom. Quand on voudra la jouer sur un sprite, on utilisera la méthode play()
+  // creation de l'animation "anim_tourne_gauche" qui sera jouée sur le player lorsque ce dernier tourne à gauche
+  // utilisation de la propriété estSolide
 
-groupe_pyrhanas= this.physics.add.group();
-groupe_pyrhanas.create(300, 584, "img_pyrhana");
-groupe_pyrhanas.create(600, 584, "img_pyrhana"); 
-groupe_pyrhanas.create(50, 300, "img_pyrhana");
-this.physics.add.overlap( groupe_pyrhanas, deplacementPyrhana, null, this);
+groupe_bouteilles = this.physics.add.group();
+this.physics.add.collider(groupe_bouteilles, calque_plateforme);
+groupe_bouteilles.create(200, 0, "bouteille");
+groupe_bouteilles.create(1230, 500, "bouteille");
+groupe_bouteilles.create(1620, 530, "bouteille");
+
+
+/** CREATION DU PERSONNAGE  ET ENNEMIS **/
 
 // On créée un nouveau personnage : player et on le positionne
 player = this.physics.add.sprite(100, 450, "img_perso")
@@ -86,17 +110,12 @@ player = this.physics.add.sprite(100, 450, "img_perso")
 player.setBounce(0.2); // on donne un petit coefficient de rebond
 player.setCollideWorldBounds(true); // le player se cognera contre les bords du monde
 player.setDepth(50);
+groupe_pyrhanas= this.physics.add.group();
+this.physics.add.collider(player, calque_plateforme);
 
 
+//ajout des bouteilles d'eau sur les endroits où il y a la propriété ravitaillement 
 
-/** ANIMATIONS **/
-  // dans cette partie, on crée les animations, à partir des spritesheet
-  // chaque animation est une succession de frame à vitesse de défilement défini
-  // une animation doit avoir un nom. Quand on voudra la jouer sur un sprite, on utilisera la méthode play()
-  // creation de l'animation "anim_tourne_gauche" qui sera jouée sur le player lorsque ce dernier tourne à gauche
-      // utilisation de la propriété estSolide
-    calque_plateforme.setCollisionByProperty({ estSolide: true });
-    
     this.anims.create({
     key: "anim_tourne_gauche", // key est le nom de l'animation : doit etre unique poru la scene.
     frames: this.anims.generateFrameNumbers("img_perso", { start: 15, end: 17 }), // on prend toutes les frames de img perso numerotées de 0 à 3
@@ -116,22 +135,41 @@ player.setDepth(50);
     frameRate: 20
   });
   
-  /** CREATION DU CLAVIER **/  
+
+for (var i=0;i<7; i++){
+  var coordX=Phaser.Math.Between(0,3200);
+  var coordY=Phaser.Math.Between(0,640);
+  var un_pyrhana=groupe_pyrhanas.create(coordX, coordY, "img_pyrhana");
+  this.physics.add.collider(groupe_pyrhanas,calque_plateforme);
+  un_pyrhana.setBounce(1);
+  un_pyrhana.setCollideWorldBounds(true);
+  groupe_pyrhanas.setVelocity(Phaser.Math.Between(-200, 200), 20);
+  un_pyrhana.allowGravity = false;
+}
+this.physics.add.collider(groupe_pyrhanas,calque_plateforme);
+
+ /** CREATION DU CLAVIER **/  
   clavier = this.input.keyboard.createCursorKeys();
 
-  /** GESTION DES INTERACTIONS ENTRE GROUPES ET ELEMENTS **/  
-    // définition des tuiles de plateformes qui sont solides
- 
-    // ajout d'une collision entre le joueur et le calque plateformes
-    this.physics.add.collider(player, calque_plateforme); 
-    this.physics.add.collider(groupe_pyrhanas, calque_plateforme);
-    
-    // redimentionnement du monde avec les dimensions calculées via tiled
-    this.physics.world.setBounds(0, 0, 3200, 640);
-    //  ajout du champs de la caméra de taille identique à celle du monde
-    this.cameras.main.setBounds(0, 0, 3200, 640);
-    // ancrage de la caméra sur le joueur
-    this.cameras.main.startFollow(player);  
+/** GESTION DES INTERACTIONS ENTRE GROUPES ET ELEMENTS **/  
+  // définition des tuiles de plateformes qui sont solides
+
+  // ajout d'une collision entre le joueur et le calque plateformes
+  
+  
+  // redimentionnement du monde avec les dimensions calculées via tiled
+  this.physics.world.setBounds(0, 0, 3200, 640);
+  //  ajout du champs de la caméra de taille identique à celle du monde
+  this.cameras.main.setBounds(0, 0, 3200, 640);
+  // ancrage de la caméra sur le joueur
+  this.cameras.main.startFollow(player);  
+  
+
+  //creation des vies 
+  coeur1 = this.add.image(40, 70, 'img_coeur_plein').setScrollFactor(0);
+  coeur2 = this.add.image(120, 70, 'img_coeur_plein').setScrollFactor(0);;
+  coeur3 = this.add.image(200, 70, 'img_coeur_plein').setScrollFactor(0);;
+  var fin=this.physics.add.staticSprite(3000,320,"level_completed");
   
  }
 /***********************************************************************/
@@ -139,11 +177,7 @@ player.setDepth(50);
 /***********************************************************************/
 
 update() {
-  /*
-    if (gameOver) {
-      return;
-    }
-  */
+
     if (clavier.right.isDown) {
       player.setVelocityX(160);
       player.anims.play('anim_tourne_droite', true);
@@ -154,34 +188,80 @@ update() {
       player.setVelocityX(0);
       player.anims.play('anim_face', true);
     } 
-    if (clavier.space.isDown && player.body.onFloor()) {
+    if (clavier.up.isDown && player.body.onFloor()) {
       player.setVelocityY(-300);
       player.anims.play('anim_face', true);
     }
+    if (Phaser.Input.Keyboard.JustDown(clavier.space) == true) {
+        if (this.physics.overlap(player, this.fin)) this.scene.switch("course");
+      }
+
   
+    //timer pour les coeurs 
+  this.physics.add.overlap(player, groupe_bouteilles, this.ramasserBouteille, null, this);
+  this.physics.add.overlap(player, groupe_pyrhanas, this.chocAvecPyrahna, null, this);
+
  
+  if (gameOver) {
+    console.log("gameover");
+    this.gameOver();
+    return ;
   }
 
-
+  
 }
-function deplacementPyrhana(un_pyrahna){
-  // Générer un mouvement aléatoire pour la position
-  var randomX = Phaser.Math.Between(0, 800);
-  var randomY = Phaser.Math.Between(0, 600);
 
-  // Appliquer le mouvement aléatoire à la position de l'objet
-  groupe_pyrhanas.x += randomX;
-  groupe_pyrhanas.y += randomY;
+/*
+chocAvecBombe(un_player, une_bombe) {
+  this.physics.pause();
+  player.setTint(0xff0000);
+  player.anims.play("anim_face");
+  gameOver = true;
+}*/
 
-  // Générer une rotation aléatoire
-  var randomRotation = Phaser.Math.Between(-0.02, 0.02);
+chocAvecPyrahna(player, pyrahna) {
+  pyrahna.disableBody(true, true);
+  this.perdreUneVie();
 
-  // Appliquer la rotation aléatoire à l'objet
-  groupe_pyrhanas.rotation += randomRotation;
-}
-function chocAvecPyrahna(un_player, un_pyrahna) {
-    this.physics.pause();
-    player.setTint(0xff0000);
-    player.anims.play("anim_face");
-    gameOver = true;
   }
+
+perdreUneVie() {
+   // console.log(this.monTimer)
+    if (vies > 0) {
+      vies -= 1;
+      if (vies == 2) {
+        coeur3.setTexture('img_coeur_vide');
+      } else if (vies == 1) {
+        coeur2.setTexture('img_coeur_vide');
+      } else if (vies == 0) {
+        coeur1.setTexture('img_coeur_vide');
+        gameOver = true;
+        console.log(gameOver)
+      }
+    }
+    console.log(vies)
+  }
+
+  gameOver() {
+    // Afficher l'image de game over
+    const gameOverImage = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 2, 'img_gameOver').setScrollFactor(0);
+    gameOverImage.setOrigin(0.5);
+  }
+
+  ramasserBouteille(un_player, une_bouteille) {
+    une_bouteille.disableBody(true, true);
+    this.GagnerUneVie();
+  }
+
+  GagnerUneVie() {
+    if (vies > 0 && vies < 3) {
+      vies += 1;
+      if (vies == 3) {
+        coeur3.setTexture('img_coeur_plein');
+      } else if (vies == 2) {
+        coeur2.setTexture('img_coeur_plein');
+      }
+    }
+  }
+}
+

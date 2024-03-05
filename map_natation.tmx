@@ -2301,6 +2301,7 @@
   <tile id="458">
    <properties>
     <property name="estSolide" type="bool" value="false"/>
+    <property name="ravitaillement" type="bool" value="true"/>
    </properties>
   </tile>
   <tile id="459">
@@ -4466,6 +4467,7 @@
   <tile id="891">
    <properties>
     <property name="estSolide" type="bool" value="true"/>
+    <property name="ravitaillement" type="bool" value="true"/>
    </properties>
   </tile>
   <tile id="892">
