@@ -113,7 +113,7 @@ export default class menu extends Phaser.Scene {
       // on lance le niveau 1
       bouton_play.on("pointerup", () => {
         
-        this.scene.start("course");
+        this.scene.start("velo");
       });
     }
   } 
