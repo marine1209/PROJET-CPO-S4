@@ -1,6 +1,7 @@
 
 var player; //designe le sprite du joueur
 var clavier; //pour la gestion du clavier
+var chercher;
 export default class velo extends Phaser.Scene {
 
     constructor(){
@@ -57,6 +58,8 @@ create(){
     calque2.setCollisionByProperty({estSolide : true});
     //creation des animations pour le personnage
     player = this.physics.add.sprite(100, 450, "img_perso");
+    player.setCollideWorldBounds(true);
+    player.body.onWorldBounds = true;
     this.anims.create({
         key: "anim_tourne_gauche", // key est le nom de l'animation : doit etre unique poru la scene.
         frames: this.anims.generateFrameNumbers("img_perso", { start: 15, end: 17 }), // on prend toutes les frames de img perso numerotées de 0 à 3
@@ -85,6 +88,8 @@ create(){
       this.physics.add.collider (player, calque2);
      /** CREATION DU CLAVIER **/  
   clavier = this.input.keyboard.createCursorKeys();
+  // affectation de la touche A à boutonFeu
+  chercher = this.input.keyboard.addKey('A'); 
 }
 update (){
   
@@ -98,10 +103,19 @@ update (){
     player.setVelocityX(0);
     player.anims.play('anim_face', true);
   } 
-
-  if (clavier.up.isDown && player.body.touching.down) {
-  player.setVelocityY(-330);}
+  if (clavier.up.isDown && player.body.onFloor()) {
+    player.setVelocityY(-400);
+    player.anims.play('anim_face', true);
+  }
+  if ( Phaser.Input.Keyboard.JustDown(boutonFeu)) {
+    //tirer(player);
+  } 
 
 }
-
+/*
+chercher(){
+  
 }
+*/
+}
+
