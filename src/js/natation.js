@@ -6,7 +6,6 @@ var vies = 3; //pour la gestion des vies du joueur
 var coeur1;
 var coeur2;
 var coeur3;
-var monTimer;
 var groupe_bouteilles;
 var gameOver = false;
 
@@ -169,7 +168,7 @@ this.physics.add.collider(groupe_pyrhanas,calque_plateforme);
   coeur1 = this.add.image(40, 70, 'img_coeur_plein').setScrollFactor(0);
   coeur2 = this.add.image(120, 70, 'img_coeur_plein').setScrollFactor(0);;
   coeur3 = this.add.image(200, 70, 'img_coeur_plein').setScrollFactor(0);;
-  var fin=this.physics.add.staticSprite(3000,320,"level_completed");
+  var fin =this.physics.add.staticSprite(3000,320,"level_completed");
   
  }
 /***********************************************************************/
@@ -192,9 +191,7 @@ update() {
       player.setVelocityY(-300);
       player.anims.play('anim_face', true);
     }
-    if (Phaser.Input.Keyboard.JustDown(clavier.space) == true) {
-        if (this.physics.overlap(player, this.fin)) this.scene.switch("course");
-      }
+   
 
   
     //timer pour les coeurs 
@@ -207,7 +204,9 @@ update() {
     this.gameOver();
     return ;
   }
-
+ if ((Phaser.Input.Keyboard.justDown(clavier.space) == true) && (this.physics.overlap(player, this.fin))) {
+  this.scene.switch("course");
+      }
   
 }
 
