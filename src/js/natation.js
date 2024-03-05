@@ -1,3 +1,4 @@
+
 var player; //designe le sprite du joueur
 var clavier; //pour la gestion du clavier
 var groupe_pyrhanas; // contient tous les sprite étoiles
@@ -204,9 +205,9 @@ update() {
     this.gameOver();
     return ;
   }
- if ((Phaser.Input.Keyboard.justDown(clavier.space) == true) && (this.physics.overlap(player, this.fin))) {
-  this.scene.switch("course");
-      }
+  if (Phaser.Input.Keyboard.JustDown(clavier.space) == true) {
+    if (this.physics.overlap(player, this.fin)) this.scene.start("course");
+  } 
   
 }
 
