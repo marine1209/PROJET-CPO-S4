@@ -42,6 +42,7 @@ preload (){
 create(){
     //création de la map
     const map = this.add.tilemap("carte_course") ; 
+    
     const tileset1 = map.addTilesetImage ("13", "tuile_terre13");
     const tileset2 = map.addTilesetImage ("15", "tuile_terre15");
     const tileset3 = map.addTilesetImage ("BG", "background");

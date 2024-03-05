@@ -18,7 +18,7 @@ var config = {
     }
   
   },
-  scene: [menu, Course, natation] 
+  scene: [menu, natation, Course] 
   
 };
 
