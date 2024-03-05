@@ -84,6 +84,15 @@ export default class Course extends Phaser.Scene {
     player = this.physics.add.sprite(100, 450, "img_perso");
     player.setCollideWorldBounds(true);
     player.body.onWorldBounds = true;
+
+    player.body.world.on(
+      "worldBounds",
+      
+      function(body, up, down, left, right){
+        if (body.gameObject === player && down ==true)
+        gameOver = true; 
+      }
+    )
     this.anims.create({
       key: "anim_tourne_gauche", // key est le nom de l'animation : doit etre unique poru la scene.
       frames: this.anims.generateFrameNumbers("img_perso", { start: 15, end: 17 }), // on prend toutes les frames de img perso numerotées de 15 à 17
@@ -159,9 +168,6 @@ export default class Course extends Phaser.Scene {
     }
    //ramasser les bouteilles
     this.physics.add.overlap(player, groupe_bouteilles, this.ramasserBouteille, null, this);
-
-    this.joueurNoye();
-    
         if (gameOver) {
           console.log("gameover");
           this.gameOver();
@@ -229,14 +235,6 @@ export default class Course extends Phaser.Scene {
   recupererBasket() {
    player.maxVX = 600; 
   }
-  joueurNoye(){
-    const tile = this.calque2.getTileAtWorldXY(player.x, player.y);
-    if (tile && tile.properties.Eau === true) {
-        gameOver=true; // Si le joueur est sur une tuile "noyée"
-    }
-  }
-  
-
 
 }
 
