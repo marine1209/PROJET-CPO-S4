@@ -12,6 +12,9 @@ export default class velo extends Phaser.Scene {
 
 preload (){
   //chargement des images
+  this.load.image("img_levierOn", "src/assets/image_velo/levier_on.png");
+  this.load.image("img_levierOff", "src/assets/image_velo/levier_off.png");
+  this.load.image("img_bouton", "src/assets/image_velo/bouton_rose.png");
   this.load.image("img_BluePlatform", "src/assets/image_velo/blue_platform.png");
   this.load.image("img_levier", "src/assets/image_velo/levier.png");
   this.load.image("img_selle", "src/assets/image_velo/selle.png");
