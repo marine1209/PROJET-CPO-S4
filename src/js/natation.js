@@ -9,7 +9,8 @@ var coeur2;
 var coeur3;
 var groupe_bouteilles;
 var gameOver = false;
-
+var fin;
+import Course from "/src/js/Course.js"; 
 
 export default class natation extends Phaser.Scene {
     // constructeur de la classe
@@ -169,7 +170,7 @@ this.physics.add.collider(groupe_pyrhanas,calque_plateforme);
   coeur1 = this.add.image(40, 70, 'img_coeur_plein').setScrollFactor(0);
   coeur2 = this.add.image(120, 70, 'img_coeur_plein').setScrollFactor(0);;
   coeur3 = this.add.image(200, 70, 'img_coeur_plein').setScrollFactor(0);;
-  var fin =this.physics.add.staticSprite(3000,320,"level_completed");
+  this.fin =this.physics.add.staticSprite(200,400,"level_completed");
   
  }
 /***********************************************************************/
@@ -205,8 +206,10 @@ update() {
     this.gameOver();
     return ;
   }
-  if (Phaser.Input.Keyboard.JustDown(clavier.space) == true) {
-    if (this.physics.overlap(player, this.fin)) this.scene.start("course");
+  if (Phaser.Input.Keyboard.JustDown(clavier.space) == true && (this.physics.overlap(player, this.fin)) ) {
+    
+       this.scene.start("course");
+  
   } 
   
 }
