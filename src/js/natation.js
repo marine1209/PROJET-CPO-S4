@@ -20,7 +20,7 @@ export default class natation extends Phaser.Scene {
  * On y trouve surtout le chargement des assets (images, son ..)
  */
 preload() {
-
+    this.load.image("img_boutonFerme", "src/assets/image_natation/closed_button.png"); 
     this.load.image("img_pyrhana", "src/assets/image_natation/pyrhana.png"); 
     this.load.image("img_livre","src/assets/image_natation/book.png");
     this.load.spritesheet("img_perso", "src/assets/sportif.png", {
@@ -28,7 +28,7 @@ preload() {
       frameHeight: 72
     });
     // chargement tuiles de jeu
-    this.load.image("Phaser_tuilesdejeu", "src/assets/image_natation/terrain_atlas.png");
+    this.load.image("tuile_atlas", "src/assets/image_natation/tuile_atlas.png");
     
     
     // chargement de la carte
@@ -53,7 +53,7 @@ preload() {
  const carte_natation = this.add.tilemap("carte_natation");
 
  // chargement du jeu de tuiles
- const tileset = carte_natation.addTilesetImage("tuile_atlas","Phaser_tuilesdejeu" );  
+ const tileset = carte_natation.addTilesetImage("tuile_atlas", "tuile_atlas");  
  
  // chargement du calque calque_background
  const calque_background = carte_natation.createLayer("calque_background",tileset);
@@ -62,8 +62,16 @@ preload() {
  // chargement du calque calque_plateformes
  const calque_plateforme = carte_natation.createLayer("calque_plateforme",tileset);  
 
- this.add.image(400,300,"img_livre").bringToTop();
+ var imageOn=this.add.image(400,300,"img_livre");
+ var buttonOn=this.add.image(750,500,"img_boutonFerme");
+ buttonOn.setInteractive();
+ buttonOn.on('pointerdown', () => {
+  // Faire disparaître l'image
+  buttonOn.setScale(1.2);
+  buttonOn.visible = false;
+  imageOn.visible=false;
 
+});
 /** CREATION DU PERSONNAGE  ET ENNEMIS **/
 
 groupe_pyrhanas= this.physics.add.group();
