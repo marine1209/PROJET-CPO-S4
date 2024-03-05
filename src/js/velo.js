@@ -2,6 +2,7 @@
 var player; //designe le sprite du joueur
 var clavier; //pour la gestion du clavier
 var boutonChercher;
+var groupe_buissons
 export default class velo extends Phaser.Scene {
 
     constructor(){
@@ -47,22 +48,19 @@ preload (){
 }
 
 create(){
+
     //création de la map
     const map = this.add.tilemap("carte_velo");
     const tileset1 = map.addTilesetImage("13", "tuile_terre13");
     const tileset2 = map.addTilesetImage("15", "tuile_terre15");
     const tileset3 = map.addTilesetImage("BG", "background");
-    const tileset4 = map.addTilesetImage("Bush", "buisson1");
     const tileset5 = map.addTilesetImage("eau", "eau");
-    const tileset6 = map.addTilesetImage("Stone", "pierre");
     const tileset7 = map.addTilesetImage("terre", "tuile_terre2");
     const tileset8 = map.addTilesetImage("terre1", "tuile_terre1");
     const tileset9 = map.addTilesetImage("terre2", "tuile_terre3");
     const tileset10 = map.addTilesetImage("terre3", "tuile_terre5");
-    const tileset11 = map.addTilesetImage("Tree_2", "arbre1");
     const calque1 = map.createLayer("arrière plan", [tileset3]);
     const calque2 = map.createLayer("terre", [tileset1, tileset7, tileset8, tileset9, tileset10, tileset2, tileset5]);
-    const calque3 = map.createLayer("arbres et buissons", [tileset11, tileset4, tileset6]);
 
     //creation des colisions 
     calque2.setCollisionByProperty({estSolide : true});
@@ -98,8 +96,9 @@ create(){
       this.physics.add.collider (player, calque2);
      /** CREATION DU CLAVIER **/  
   clavier = this.input.keyboard.createCursorKeys();
-  // affectation de la touche A à boutonFeu
+
   boutonChercher = this.input.keyboard.addKey('A'); 
+  groupe_buissons = this.add.image(400,600, "buisson1");
 }
 update (){
   
