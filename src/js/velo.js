@@ -2,7 +2,10 @@
 var player; //designe le sprite du joueur
 var clavier; //pour la gestion du clavier
 var boutonChercher;
-var groupe_buissons
+var groupe_buissons;
+var tween_mouvement;
+var plateforme_mobile;
+var levier;
 export default class velo extends Phaser.Scene {
 
     constructor(){
@@ -99,6 +102,25 @@ create(){
 
   boutonChercher = this.input.keyboard.addKey('A'); 
   groupe_buissons = this.add.image(400,600, "buisson1");
+  plateforme_mobile = this.physics.add.sprite(500,400, "img_BluePlatform");
+  this.physics.add.collider(player, plateforme_mobile);
+  plateforme_mobile.body.allowGravity = false;
+  plateforme_mobile.body.immovable = true;
+  tween_mouvement = this.tweens.add({
+  targets: [plateforme_mobile],  // on applique le tween sur platefprme_mobile
+  paused: true, // de base le tween est en pause
+  ease: "Linear",  // concerne la vitesse de mouvement : linéaire ici 
+  duration: 2000,  // durée de l'animation pour monter 
+  yoyo: true,   // mode yoyo : une fois terminé on "rembobine" le déplacement 
+  y: "-=300",   // on va déplacer la plateforme de 300 pixel vers le haut par rapport a sa position
+  delay: 0,     // délai avant le début du tween une fois ce dernier activé
+  hold: 1000,   // délai avant le yoyo : temps qeu al plate-forme reste en haut
+  repeatDelay: 1000, // deléi avant la répétition : temps que la plate-forme reste en bas
+  repeat: -1 // répétition infinie 
+  });
+  levier = this.physics.add.staticSprite(700, 500, "img_levier"); 
+  
+  levier.active = false; 
 }
 update (){
   
@@ -116,6 +138,24 @@ update (){
     player.setVelocityY(-400);
     player.anims.play('anim_face', true);
   }
+   // activation du levier : on est dessus et on appuie sur espace
+   if (
+    Phaser.Input.Keyboard.JustDown(clavier.space) == true &&
+    this.physics.overlap(player, levier) == true
+  ) {
+    // si le levier etait activé, on le désactive et stoppe la plateforme
+    if (levier.active == true) {
+      levier.active = false; // on désactive le levier
+      levier.flipX = false; // permet d'inverser l'image
+      tween_mouvement.pause();  // on stoppe le tween
+    }
+    // sinon :  on l'active et stoppe la plateforme
+    else {
+      levier.active = true; // on active le levier 
+      levier.flipX = true; // on tourne l'image du levier
+      tween_mouvement.resume();  // on relance le tween
+    }
+  } 
   if ( Phaser.Input.Keyboard.JustDown(boutonChercher)) {
     tirer(player);
   } 
