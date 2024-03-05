@@ -7,12 +7,15 @@ var coeur3;
 var monTimer;
 var groupe_bouteilles;
 var gameOver = false;
+var ramassageEnCours; 
+
 export default class Course extends Phaser.Scene {
 
   constructor() {
     super({
       key: "course"
     });
+    this.groupe_chaussures;
   }
 
   preload() {
@@ -37,11 +40,13 @@ export default class Course extends Phaser.Scene {
     this.load.image("img_coeur_plein", "src/assets/coeur_plein.png")
     this.load.image("img_coeur_vide", "src/assets/coeur_vide.png")
     this.load.image('bouteille', "src/assets/Water Bottle.png")
-    this.load.image ('img_gameOver', "src/assets/")
+    this.load.image('img_gameOver', "src/assets/game_over.png")
+    this.load.image('img_basket', "src/assets/image_course/basket.png")
+    this.load.image('img_talon', "src/assets/image_course/chaussure_talon.png")
+    this.load.image('img_claquette', "src/assets/image_course/claquette.png")
   }
 
   create() {
-
 
     //création de la map
     const map = this.add.tilemap("carte_course");
@@ -62,7 +67,7 @@ export default class Course extends Phaser.Scene {
 
     //creation des colisions 
     calque2.setCollisionByProperty({ estSolide: true });
-  
+
     //ajout des bouteilles d'eau sur les endroits où il y a la propriété ravitaillement 
     groupe_bouteilles = this.physics.add.group();
     this.physics.add.collider(groupe_bouteilles, calque2);
@@ -94,6 +99,8 @@ export default class Course extends Phaser.Scene {
       frames: [{ key: "img_perso", frame: 4 }],
       frameRate: 20
     });
+    player.maxVX = 150;
+    player.maxVY = 200;
     this.physics.add.collider(player, calque2);
     // redimentionnement du monde avec les dimensions calculées via tiled
     this.physics.world.setBounds(0, 0, 3200, 640);
@@ -111,7 +118,13 @@ export default class Course extends Phaser.Scene {
     coeur3 = this.add.image(200, 70, 'img_coeur_plein');
     player.body.onWorldBounds = true;
 
-    this.monTimer = this.time.addEvent({ delay: 5000, callback: this.perdreUneVie, callbackScope: this, loop : true});
+    this.monTimer = this.time.addEvent({ delay: 5000, callback: this.perdreUneVie, callbackScope: this, loop: true });
+    // création des chaussures
+    this.groupe_chaussures = this.physics.add.group();
+    this.physics.add.collider(this.groupe_chaussures, calque2);
+    const basket = this.groupe_chaussures.create(100, 400, 'img_basket');
+    const talon = this.groupe_chaussures.create(200, 400, 'img_talon');
+    const claquette = this.groupe_chaussures.create(300, 400, 'img_claquette');
   }
   update() {
     // Mettre à jour la position des cœurs par rapport à la caméra
@@ -128,30 +141,42 @@ export default class Course extends Phaser.Scene {
 
     //position du joueur en fonction des touches cliquées
     if (clavier.right.isDown) {
-      player.setVelocityX(160);
+      player.setVelocityX(player.maxVX);
       player.anims.play('anim_tourne_droite', true);
     } else if (clavier.left.isDown) {
-      player.setVelocityX(-160);
+      player.setVelocityX(-player.maxVX);
       player.anims.play('anim_tourne_gauche', true);
     } else {
       player.setVelocityX(0);
       player.anims.play('anim_face', true);
     }
     if (clavier.up.isDown && player.body.blocked.down) {
-      player.setVelocityY(-500);
+      player.setVelocityY(-player.maxVY);
     }
+    if (clavier.space.isDown){
+      // Parcourir chaque chaussure dans le groupe de chaussures
+      this.groupe_chaussures.getChildren().forEach(chaussure => {
+          // Vérifier si le joueur est en collision avec la chaussure
+          if (Phaser.Geom.Intersects.RectangleToRectangle(player.getBounds(), chaussure.getBounds())) {
+              // Si oui, appeler la fonction pour ramasser la chaussure
+              ramassageEnCours = true;
+              this.ramasserChaussure(player, chaussure);
+          }
+      });
     //timer pour les coeurs 
     this.physics.add.overlap(player, groupe_bouteilles, this.ramasserBouteille, null, this);
-
-    if (gameOver) {
-      return;
-    }
-
+    /*
+        if (gameOver) {
+          console.log("gameover");
+          this.gameOver();
+          return ;
+        }*/
   }
-
+  }
   perdreUneVie() {
     console.log(this.monTimer)
-    if (vies > 0) {
+
+    if (vies >= 0) {
       vies -= 1;
       if (vies == 2) {
         coeur3.setTexture('img_coeur_vide');
@@ -159,8 +184,11 @@ export default class Course extends Phaser.Scene {
         coeur2.setTexture('img_coeur_vide');
       } else if (vies == 0) {
         coeur1.setTexture('img_coeur_vide');
+        gameOver = true;
+        console.log(gameOver)
       }
     }
+    console.log(vies)
   }
 
   ramasserBouteille(un_player, une_bouteille) {
@@ -178,6 +206,37 @@ export default class Course extends Phaser.Scene {
       }
     }
   }
+  gameOver() {
+    // Afficher l'image de game over
+    const gameOverImage = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 2, 'img_gameOver');
+    gameOverImage.setOrigin(0.5);
+  }
+
+  ramasserChaussure(player, chaussure) {
+    // Détecter le type de chaussure ramassée et mettre à jour les propriétés du joueur
+    if (chaussure.texture.key == 'img_basket') {
+      this.recupererBasket();
+    } else if (chaussure.texture.key == 'img_talon') {
+      this.recupererTalon();
+    } else if (chaussure.texture.key== 'img_claquette') {
+      this.recupererClaquette();
+    }
+    ramassageEnCours=false; 
+  }
+  recupererClaquette() {
+    console.log("coucou");
+    player.maxVX= 60;
+    console.log("ca marche");
+    
+  }
+  recupererTalon() {
+
+  }
+  recupererBasket() {
+
+  }
+
+
 
 }
 
