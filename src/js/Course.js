@@ -112,24 +112,6 @@ export default class Course extends Phaser.Scene {
     player.body.onWorldBounds = true;
 
     this.monTimer = this.time.addEvent({ delay: 5000, callback: this.perdreUneVie, callbackScope: this, loop : true});
-
-    this.player.body.world.on(
-      "worldbounds",   
-      function (body, up, down, left, right) {
-        // on verifie si la hitbox qui est rentrée en collision est celle du player,
-        // et si la collision a eu lieu sur le bord inférieur du player
-        if (body.gameObject === player && down == true) {
-          // si oui : GAME OVER on arrete la physique et on colorie le personnage en rouge
-          this.physics.pause();
-          this.player.setTint(0xff0000);
-          this.add.image(400, 300, "img_GameOver");
-        }
-  
-      },
-  
-     
-  
-    ); 
   }
   update() {
     // Mettre à jour la position des cœurs par rapport à la caméra
