@@ -1,7 +1,7 @@
 
 var player; //designe le sprite du joueur
 var clavier; //pour la gestion du clavier
-var chercher;
+var boutonChercher;
 export default class velo extends Phaser.Scene {
 
     constructor(){
@@ -24,7 +24,7 @@ preload (){
   this.load.image("buisson1", "src/assets/image_course/Bush.png");
   this.load.image("pierre", "src/assets/image_course/Stone.png");
   this.load.image("arbre1", "src/assets/image_course/Tree_2.png");
-  this.load.tilemapTiledJSON("carte_course", "src/assets/image_course/MAP COURSE.tmj");
+  this.load.tilemapTiledJSON("carte_velo", "src/assets/image_velo/MAP VELO.tmj");
   this.load.spritesheet("img_perso", "src/assets/sportif.png", {
     frameWidth: 48,
     frameHeight: 72
@@ -38,7 +38,7 @@ preload (){
 
 create(){
     //création de la map
-    const map = this.add.tilemap("carte_course");
+    const map = this.add.tilemap("carte_velo");
     const tileset1 = map.addTilesetImage("13", "tuile_terre13");
     const tileset2 = map.addTilesetImage("15", "tuile_terre15");
     const tileset3 = map.addTilesetImage("BG", "background");
@@ -89,7 +89,7 @@ create(){
      /** CREATION DU CLAVIER **/  
   clavier = this.input.keyboard.createCursorKeys();
   // affectation de la touche A à boutonFeu
-  chercher = this.input.keyboard.addKey('A'); 
+  boutonChercher = this.input.keyboard.addKey('A'); 
 }
 update (){
   
@@ -107,11 +107,15 @@ update (){
     player.setVelocityY(-400);
     player.anims.play('anim_face', true);
   }
-  if ( Phaser.Input.Keyboard.JustDown(boutonFeu)) {
-    //tirer(player);
+  if ( Phaser.Input.Keyboard.JustDown(boutonChercher)) {
+    tirer(player);
   } 
 
 }
+tirer(player) {
+  // mesasge d'alerte affichant les attributs de player
+alert ("joueur en position"+player.x + ","+player.y ) ; 
+} 
 /*
 chercher(){
   
