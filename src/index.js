@@ -1,4 +1,5 @@
 import Course from "/src/js/Course.js"; 
+import velo from "/src/js/velo.js"; 
 import natation from "/src/js/natation.js";
 import menu from "/src/js/menu.js";
 
@@ -18,7 +19,7 @@ var config = {
     }
   
   },
-  scene: [menu, natation, Course] 
+  scene: [menu, velo, natation, Course] 
   
 };
 

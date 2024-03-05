@@ -53,7 +53,7 @@ export default class menu extends Phaser.Scene {
       //Cas ou la sourris clique sur le bouton play :
       // on lance le niveau 1
       bouton_play.on("pointerup", () => {
-        this.scene.start("course");
+        this.scene.start("natation");
       });
       //Cas ou la sourris clique sur le bouton play :
       // on lance le niveau 1
@@ -81,7 +81,7 @@ export default class menu extends Phaser.Scene {
       // on lance le niveau 1
       bouton_play.on("pointerup", () => {
         
-        this.scene.start("course");
+        this.scene.start("natation");
       });
     }
   } 

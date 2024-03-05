@@ -1,54 +1,58 @@
 
 var player; //designe le sprite du joueur
 var clavier; //pour la gestion du clavier
-export default class Course extends Phaser.Scene {
+export default class velo extends Phaser.Scene {
 
     constructor(){
         super ({
-            key : "course"
+            key : "velo"
         });
     }
 
 preload (){
   //chargement des images
-   this.load.image ("tuile_terre1", "src/assets/image_course/1.png");
-   this.load.image ("tuile_terre2", "src/assets/image_course/2.png");
-   this.load.image ("tuile_terre3", "src/assets/image_course/3.png");
-   this.load.image ("tuile_terre5", "src/assets/image_course/5.png");
-   this.load.image ("tuile_terre13", "src/assets/image_course/13.png");
-   this.load.image ("tuile_terre14", "src/assets/image_course/14.png");
-   this.load.image ("tuile_terre15", "src/assets/image_course/15.png");
-   this.load.image ("eau", "src/assets/image_course/17.png");
-   this.load.image ("background", "src/assets/image_course/BG.png");
-   this.load.image ("buisson1", "src/assets/image_course/Bush.png");
-   this.load.image ("pierre", "src/assets/image_course/Stone.png");
-   this.load.image ("arbre1", "src/assets/image_course/Tree_2.png");
-   this.load.tilemapTiledJSON ("carte_course", "src/assets/image_course/MAP COURSE.tmj");
-   this.load.spritesheet("img_perso", "src/assets/sportif.png", {
+  this.load.image("tuile_terre1", "src/assets/image_course/1.png");
+  this.load.image("tuile_terre2", "src/assets/image_course/2.png");
+  this.load.image("tuile_terre3", "src/assets/image_course/3.png");
+  this.load.image("tuile_terre5", "src/assets/image_course/5.png");
+  this.load.image("tuile_terre13", "src/assets/image_course/13.png");
+  this.load.image("tuile_terre14", "src/assets/image_course/14.png");
+  this.load.image("tuile_terre15", "src/assets/image_course/15.png");
+  this.load.image("eau", "src/assets/image_course/17.png");
+  this.load.image("background", "src/assets/image_course/BG.png");
+  this.load.image("buisson1", "src/assets/image_course/Bush.png");
+  this.load.image("pierre", "src/assets/image_course/Stone.png");
+  this.load.image("arbre1", "src/assets/image_course/Tree_2.png");
+  this.load.tilemapTiledJSON("carte_course", "src/assets/image_course/MAP COURSE.tmj");
+  this.load.spritesheet("img_perso", "src/assets/sportif.png", {
     frameWidth: 48,
     frameHeight: 72
   });
+  this.load.image("img_coeur_plein", "src/assets/coeur_plein.png")
+  this.load.image("img_coeur_vide", "src/assets/coeur_vide.png")
+  this.load.image('bouteille', "src/assets/Water Bottle.png")
+  this.load.image('img_gameOver', "src/assets/game_over.png")
+
 }
 
 create(){
     //création de la map
-    const map = this.add.tilemap("carte_course") ; 
-    
-    const tileset1 = map.addTilesetImage ("13", "tuile_terre13");
-    const tileset2 = map.addTilesetImage ("15", "tuile_terre15");
-    const tileset3 = map.addTilesetImage ("BG", "background");
-    const tileset4 = map.addTilesetImage ("Bush", "buisson1");
-    const tileset5 = map.addTilesetImage ("17", "eau");
-    const tileset6 = map.addTilesetImage ("Stone", "pierre");
-    const tileset7 = map.addTilesetImage ("terre", "tuile_terre2");
-    const tileset8 = map.addTilesetImage ("terre1", "tuile_terre1");
-    const tileset9 = map.addTilesetImage ("terre2", "tuile_terre3");
-    const tileset10 = map.addTilesetImage ("terre3", "tuile_terre5");
-    const tileset11 = map.addTilesetImage ("Tree_2", "arbre1");
+    const map = this.add.tilemap("carte_course");
+    const tileset1 = map.addTilesetImage("13", "tuile_terre13");
+    const tileset2 = map.addTilesetImage("15", "tuile_terre15");
+    const tileset3 = map.addTilesetImage("BG", "background");
+    const tileset4 = map.addTilesetImage("Bush", "buisson1");
+    const tileset5 = map.addTilesetImage("eau", "eau");
+    const tileset6 = map.addTilesetImage("Stone", "pierre");
+    const tileset7 = map.addTilesetImage("terre", "tuile_terre2");
+    const tileset8 = map.addTilesetImage("terre1", "tuile_terre1");
+    const tileset9 = map.addTilesetImage("terre2", "tuile_terre3");
+    const tileset10 = map.addTilesetImage("terre3", "tuile_terre5");
+    const tileset11 = map.addTilesetImage("Tree_2", "arbre1");
     const calque1 = map.createLayer("arrière plan", [tileset3]);
-    const calque2 = map.createLayer("terre", [tileset1,tileset7,tileset8,tileset9,tileset10,tileset2,tileset5]);
-    const calque3 = map.createLayer("ravaitaillements", [tileset6]);
-    const calque4 = map.createLayer ("arbres et buissons", [tileset11, tileset4]);
+    const calque2 = map.createLayer("terre", [tileset1, tileset7, tileset8, tileset9, tileset10, tileset2, tileset5]);
+    const calque3 = map.createLayer("arbres et buissons", [tileset11, tileset4, tileset6]);
+
     //creation des colisions 
     calque2.setCollisionByProperty({estSolide : true});
     //creation des animations pour le personnage
@@ -71,8 +75,14 @@ create(){
         frames: [{ key: "img_perso", frame: 4 }],
         frameRate: 20
       });
-
-   this.physics.add.collider (player, calque2);
+      this.physics.add.collider(player, calque2);
+      // redimentionnement du monde avec les dimensions calculées via tiled
+      this.physics.world.setBounds(0, 0, 3200, 640);
+      //  ajout du champs de la caméra de taille identique à celle du monde
+      this.cameras.main.setBounds(0, 0, 3200, 640);
+      // ancrage de la caméra sur le joueur
+      this.cameras.main.startFollow(player);
+      this.physics.add.collider (player, calque2);
      /** CREATION DU CLAVIER **/  
   clavier = this.input.keyboard.createCursorKeys();
 }
@@ -89,7 +99,7 @@ update (){
     player.anims.play('anim_face', true);
   } 
 
-  if (clavier.space.isDown && player.body.touching.down) {
+  if (clavier.up.isDown && player.body.touching.down) {
   player.setVelocityY(-330);}
 
 }
