@@ -69,39 +69,7 @@ export default class menu extends Phaser.Scene {
         // Revenir à la taille normale quand la souris quitte
         bouton_musiqueOn.setScale(1);
     });
-    /*
-    var ismusiqueOnVisible = true;
-
-
-    // Ajouter un gestionnaire d'événements de clic sur la première image
-    bouton_musiqueOn.on('pointerdown',  ()=> {
-        // Basculer entre les images quand on clique sur la première
-        if (ismusiqueOnVisible) {
-            bouton_musiqueOn.setVisible(false);
-            bouton_musiqueOff.setVisible(true);
-            isImage1Visible = false;
-        } else {
-            bouton_musiqueOn.setVisible(true);
-            bouton_musiqueOff.setVisible(false);
-            isImage1Visible = true;
-        }
-    });
-    */
-/*
-    // Ajouter un gestionnaire d'événements de clic sur la deuxième image
-    bouton_musiqueOff.on('pointerdown',  ()=> {
-        // Basculer entre les images quand on clique sur la deuxième
-        if (!ismusiqueOnVisible) {
-            bouton_musiqueOn.setVisible(true);
-            bouton_musiqueOff.setVisible(false);
-            ismusiqueONVisible = true;
-        } else {
-            bouton_musiqueOn.setVisible(false);
-            bouton_musiqueOff.setVisible(true);
-            ismusiqueONVisible = false;
-        }
-    });
-*/
+    
       //Cas ou la souris ne passe plus sur le bouton play
       bouton_play.on("pointerout", () => {
       bouton_play.setScale(1);
@@ -113,7 +81,7 @@ export default class menu extends Phaser.Scene {
       // on lance le niveau 1
       bouton_play.on("pointerup", () => {
         
-        this.scene.start("velo");
+        this.scene.start("natation");
       });
     }
   } 
