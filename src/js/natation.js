@@ -155,7 +155,7 @@ update() {
       player.anims.play('anim_face', true);
     } 
     if (clavier.space.isDown && player.body.onFloor()) {
-      player.setVelocityY(-330);
+      player.setVelocityY(-300);
       player.anims.play('anim_face', true);
     }
   
