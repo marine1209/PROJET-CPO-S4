@@ -22,6 +22,7 @@ export default class Course extends Phaser.Scene {
 
   preload() {
     //chargement des images
+    this.load.image("level_completed", "src/assets/finished_line.png");
     this.load.image("tuile_terre1", "src/assets/image_course/1.png");
     this.load.image("tuile_terre2", "src/assets/image_course/2.png");
     this.load.image("tuile_terre3", "src/assets/image_course/3.png");
@@ -159,6 +160,12 @@ export default class Course extends Phaser.Scene {
     if (clavier.up.isDown && player.body.blocked.down) {
       player.setVelocityY(-player.maxVY);
     }
+    
+    if((Phaser.Input.Keyboard.JustDown(boutonNext))&&(this.physics.overlap(player, this.fin))){
+      
+      this.scene.start("accueil_velo");
+    } 
+
     if (clavier.space.isDown){
       // Parcourir chaque chaussure dans le groupe de chaussures
       this.groupe_chaussures.getChildren().forEach(chaussure => {

@@ -29,11 +29,11 @@ export default class natation extends Phaser.Scene {
  */
 preload() {
     
-    this.load.image("img_coeur_plein", "src/assets/coeur_plein.png")
-    this.load.image("img_coeur_vide", "src/assets/coeur_vide.png")
-    this.load.image("bouteille", "src/assets/Water Bottle.png")
-    this.load.image("level_completed", "src/assets/finished_line.png")
-    this.load.image ('img_gameOver', "src/assets/game_over.png")
+    this.load.image("img_coeur_plein", "src/assets/coeur_plein.png");
+    this.load.image("img_coeur_vide", "src/assets/coeur_vide.png");
+    this.load.image("bouteille", "src/assets/Water Bottle.png");
+    this.load.image("level_completed", "src/assets/finished_line.png");
+    this.load.image ('img_gameOver', "src/assets/game_over.png");
     this.load.image("img_boutonFerme", "src/assets/image_natation/closed_button.png"); 
     this.load.image("img_pyrhana", "src/assets/image_natation/pyrhana.png"); 
     this.load.image("img_livre","src/assets/image_natation/book.png");
@@ -208,7 +208,7 @@ update() {
   }
   if (Phaser.Input.Keyboard.JustDown(clavier.space) == true && (this.physics.overlap(player, this.fin)) ) {
     
-       this.scene.start("course");
+       this.scene.start("accueil_course");
   
   } 
   
