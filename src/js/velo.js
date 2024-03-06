@@ -13,6 +13,8 @@ var tween_mouvement;
 var tween_mouvement2;
 var levier;
 var mouvStone;
+var boutonNext;
+var plateforme3; 
 export default class velo extends Phaser.Scene {
 
   constructor() {
@@ -117,7 +119,7 @@ export default class velo extends Phaser.Scene {
     this.groupe_velo = this.physics.add.group();
     const selle = this.groupe_velo.create(160, 0, "img_selle");
     const roueAV = this.groupe_velo.create(1300, 0, "img_roueAV");
-    const roueAR = this.groupe_velo.create(2000, 0, "img_roueAR");
+    const roueAR = this.groupe_velo.create(2500, 0, "img_roueAR");
     const guidon = this.groupe_velo.create(10000, 0, "img_guidon");
     const pedale = this.groupe_velo.create(1430, 0, 'img_pedale');
     this.physics.add.collider(this.groupe_velo, calque2);
@@ -130,24 +132,29 @@ export default class velo extends Phaser.Scene {
     const buisson2 = this.groupe_buissons.create(2000, 0, "buisson1");
     const pierre3 = this.groupe_buissons.create(1430, 0, "pierre");
     this.physics.add.collider(this.groupe_buissons, calque2);
+    this.physics.add.collider(player, this.groupe_buissons);
+    this.groupe_buissons.children.iterate(buisson => {
+      buisson.body.immovable = true;
+  });
 
     //création bouton rose et du score
-    bouton2 = this.physics.add.staticSprite(1200, 350, "img_bouton");
-    this.physics.add.collider(bouton2, calque2);
-    //this.physics.add.collider(player, bouton2);
+    bouton2 = this.physics.add.staticSprite(1200, 382, "img_bouton");
+this.physics.add.collider(bouton2, calque2);
+
     bouton2.active = false;
-    
 
-    zone_texte_score = this.add.text(550, 16, score, { fontSize: '32px', fill: '#000' }).setScrollFactor(0);
+    zone_texte_score = this.add.text(550, 16, score.toString() + "/5", { fontSize: '32px', fill: '#000' }).setScrollFactor(0);
     // overlap eau
-
-    calque2.setTileIndexCallback([61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72], this.gameOver, this);
+    
+    calque2.setTileIndexCallback([ 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72], this.gameOver, this);
     this.physics.add.overlap(player, calque2);
     this.physics.add.overlap(player, this.groupe_velo, this.ramasserVelo, null, this);
 
-    this.fin = this.physics.add.staticSprite(300, 500, "level_completed");
-    
-    
+
+    plateforme3 = this.physics.add.image(2500, 150, "tuile_terre2");
+    this.physics.add.collider(player, plateforme3);
+    plateforme3.body.allowGravity = false;
+
     plateforme_descendante = this.physics.add.sprite(3000, 200, "img_BluePlatform");
     this.physics.add.collider(player, plateforme_descendante);
     plateforme_descendante.body.allowGravity = false;
@@ -190,13 +197,14 @@ export default class velo extends Phaser.Scene {
     levier = this.physics.add.staticSprite(700, 538, "img_levier");
     levier.active = false;
     this.physics.add.collider(levier, calque2);
+    boutonNext=this.input.keyboard.addKey('A');
 
 
   }
 
 
   update() {
-    console.log("begin upd")
+
 
     if (clavier.right.isDown) {
       player.setVelocityX(160);
@@ -205,17 +213,16 @@ export default class velo extends Phaser.Scene {
       player.setVelocityX(-160);
       player.anims.play('anim_tourne_gauche', true);
     } else {
-      console.log("jarrivla")
-
       player.setVelocityX(0);
       player.anims.play('anim_face', true);
-      console.log("jesors")
     }
     if (clavier.up.isDown && player.body.onFloor()) {
-          player.setVelocityY(-400);
-          player.anims.play('anim_face', true);
-        }
-    /*if (
+      player.setVelocityY(-400);
+      player.anims.play('anim_face', true);
+    }
+    /*
+    // activation du levier : on est dessus et on appuie sur espace
+     if (
       Phaser.Input.Keyboard.JustDown(clavier.space) == true &&
       this.physics.overlap(player, levier) == true
     ) {
@@ -231,7 +238,7 @@ export default class velo extends Phaser.Scene {
         levier.flipX = true; // on tourne l'image du levier
         tween_mouvement.resume();  // on relance le tween
       }
-
+    
     }*/
     if (
       Phaser.Input.Keyboard.JustDown(clavier.space) == true &&
@@ -252,31 +259,29 @@ export default class velo extends Phaser.Scene {
 
     }
     
-    if ((clavier.down.isDown)&&(this.physics.overlap(player, bouton2) == true) ) {
+    if ((clavier.down.isDown) && (this.physics.overlap(player, bouton2) == true)) {
       console.log("bouton")
       if (bouton2.active == true) {
         bouton2.active = false; // on désactive le levier
         bouton2.flipX = false; // permet d'inverser l'image
-        //this.groupe_buissons.disableBody(true,true);
-        this.appuyerSurBouton(player, this.groupe_buissons);
+        this.groupe_buissons.children.iterate(buisson => {
+          buisson.disableBody(true, true);
+      });
+      this.appuyerSurBouton(player, this.groupe_buissons);
       }
       // sinon :  on l'active et stoppe la plateforme
       else {
         bouton2.active = true; // on active le levier 
         bouton2.flipX = true; // on tourne l'image du levier
-        console.log("pas bputon")
       }
       //this.appuyerSurBouton(player, groupe_buissons);
     }
 
-    if ((Phaser.Input.Keyboard.JustDown(clavier.space)) && (this.physics.overlap(player, this.fin))) {
-      console.log("coucou");
+    if (this.score==5) {
       this.finDeJeu();
-
     }
-    console.log("fin upd")
-  
   }
+
   gameOver() {
     // Afficher l'image de game over
     const gameOverImage = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 2, 'img_gameOver').setScrollFactor(0);
@@ -286,19 +291,15 @@ export default class velo extends Phaser.Scene {
 
   appuyerSurBouton(joueur, buissons) {
     //buissons.disableBody(true, true);
-    buissons.setVisible(false);
+buissons.setVisible(false);
 
   }
 
   ramasserVelo(une_player, un_velo) {
     un_velo.disableBody(true, true);
-    //un_velo.setVisible(false);
-    this.score += 1;
-   
-    this.zone_texte_score.setText(550, 16, this.score + '/5', { fontSize: '32px', fill: '#000' }).setScrollFactor(0);
-    //zone_texte_score.setText(score + "/ 5 ");
-
-  }
+    score += 1; // Augmente le score
+    zone_texte_score.setText(score.toString()+ "/5"); // Met à jour le texte du score
+}
 
   finDeJeu() {
     const gagner = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 2, 'img_fin').setScrollFactor(0);
