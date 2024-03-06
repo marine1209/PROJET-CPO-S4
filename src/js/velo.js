@@ -1,15 +1,11 @@
 
 var player; //designe le sprite du joueur
 var clavier; //pour la gestion du clavier
-var levier;
-var plateforme_mobile;
+var groupe_buissons;
+var bouton_disparaitre;
 var bouton;
-var tween_mouvement;
-var tween_mouvement2;
-var boutonChercher;
-var groupe_buissons
-var plateforme_descendante;
-var mouvStone;
+var score;
+var zone_texte_score;
 export default class velo extends Phaser.Scene {
 
   constructor() {
@@ -20,7 +16,6 @@ export default class velo extends Phaser.Scene {
 
   preload() {
     //chargement des images
-    this.load.image("pierre2", "src/assets/image_velo/rocherMouv.png");
     this.load.image("img_levierOn", "src/assets/image_velo/levier_on.png");
     this.load.image("img_levierOff", "src/assets/image_velo/levier_off.png");
     this.load.image("img_bouton", "src/assets/image_velo/bouton_rose.png");
@@ -52,11 +47,14 @@ export default class velo extends Phaser.Scene {
     this.load.image("img_coeur_vide", "src/assets/coeur_vide.png")
     this.load.image('bouteille', "src/assets/Water Bottle.png")
     this.load.image('img_gameOver', "src/assets/game_over.png")
+    this.load.image('img_bouton', "src/assets/bouton_rose.png")
+    this.load.image("level_completed", "src/assets/finished_line.png")
+    this.load.image('img_fin', "src/assets/image_fin.png")
 
   }
 
   create() {
-
+ console.log("begin create")
     //création de la map
     const map = this.add.tilemap("carte_velo");
     const tileset1 = map.addTilesetImage("13", "tuile_terre13");
@@ -73,6 +71,7 @@ export default class velo extends Phaser.Scene {
     //creation des colisions 
     calque2.setCollisionByProperty({ estSolide: true });
     //creation des animations pour le personnage
+
     player = this.physics.add.sprite(100, 450, "img_perso");
 
     player.setCollideWorldBounds(true);
@@ -104,73 +103,47 @@ export default class velo extends Phaser.Scene {
     this.cameras.main.startFollow(player);
     this.physics.add.collider(player, calque2);
     /** CREATION DU CLAVIER **/
-    mouvStone = this.physics.add.image(2400, 480, "pierre2");
-    this.physics.add.collider(mouvStone, player);
-    this.physics.add.collider(mouvStone, calque2);
-
     clavier = this.input.keyboard.createCursorKeys();
-    plateforme_descendante = this.physics.add.sprite(3000, 500, "img_BluePlatform");
-    this.physics.add.collider(player, plateforme_descendante);
-    plateforme_descendante.body.allowGravity = false;
-    plateforme_descendante.body.immovable = true;
-    tween_mouvement2 = this.tweens.add({
-      targets: [plateforme_descendante],  // on applique le tween sur platefprme_mobile
-      paused: true, // de base le tween est en pause
-      ease: "Linear",  // concerne la vitesse de mouvement : linéaire ici 
-      duration: 2000,  // durée de l'animation pour monter 
-      yoyo: true,   // mode yoyo : une fois terminé on "rembobine" le déplacement 
-      y: "+=300",   // on va déplacer la plateforme de 300 pixel vers le haut par rapport a sa position
-      delay: 0,     // délai avant le début du tween une fois ce dernier activé
-      hold: 1000,   // délai avant le yoyo : temps qeu al plate-forme reste en haut
-      repeatDelay: 1000, // deléi avant la répétition : temps que la plate-forme reste en bas
-      repeat: -1 // répétition infinie 
-    });
-    this.physics.add.collider(player, plateforme_descendante);
-    bouton = this.physics.add.staticSprite(2600, 500, "img_bouton");
-    bouton.active = false;
-    this.physics.add.collider(bouton, calque2);
 
-
-    //mouvStone.setImmovable(true);
-
-
-
-    plateforme_mobile = this.physics.add.sprite(350, 450, "img_BluePlatform");
-    this.physics.add.collider(player, plateforme_mobile);
-    plateforme_mobile.body.allowGravity = false;
-    plateforme_mobile.body.immovable = true;
-
-    tween_mouvement = this.tweens.add({
-      targets: [plateforme_mobile],  // on applique le tween sur platefprme_mobile
-      paused: true, // de base le tween est en pause
-      ease: "Linear",  // concerne la vitesse de mouvement : linéaire ici 
-      duration: 2000,  // durée de l'animation pour monter 
-      yoyo: true,   // mode yoyo : une fois terminé on "rembobine" le déplacement 
-      y: "-=300",   // on va déplacer la plateforme de 300 pixel vers le haut par rapport a sa position
-      delay: 0,     // délai avant le début du tween une fois ce dernier activé
-      hold: 1000,   // délai avant le yoyo : temps qeu al plate-forme reste en haut
-      repeatDelay: 1000, // deléi avant la répétition : temps que la plate-forme reste en bas
-      repeat: -1 // répétition infinie 
-    });
-
-    levier = this.physics.add.staticSprite(700, 538, "img_levier");
-    levier.active = false;
-    this.physics.add.collider(levier, calque2);
-
-
-
-    //this.HideStone.sendToBack();
     // création groupe_vélo 
-    /*
+
     this.groupe_velo = this.physics.add.group();
-    const selle = this.groupe_velo.create(160,96,"img_selle"); 
-    const roueAV = this.groupe_velo.create (1344, 160, "img_roueAV");
-    const roueAR = this.groupe_velo.create (130, 96, "img_roueAR");
-    const guidon = this.groupe_velo.create (80, 50, "img_guidon");
- boutonChercher = this.input.keyboard.addKey('A'); 
- groupe_buissons = this.add.image(400,600, "buisson1");*/
+    const selle = this.groupe_velo.create(160, 0, "img_selle");
+    const roueAV = this.groupe_velo.create(1300, 0, "img_roueAV");
+    const roueAR = this.groupe_velo.create(2000, 0, "img_roueAR");
+    const guidon = this.groupe_velo.create(10000, 0, "img_guidon");
+    const pedale = this.groupe_velo.create(1430, 0, 'img_pedale');
+    this.physics.add.collider(this.groupe_velo, calque2);
+
+    //création des éléments qui cachent le vélo 
+    this.groupe_buissons = this.physics.add.group()
+    const buisson1 = this.groupe_buissons.create(160, 95, "buisson1");
+    const pierre1 = this.groupe_buissons.create(1300, 0, "pierre");
+    const pierre2 = this.groupe_buissons.create(10000, 0, "pierre");
+    const buisson2 = this.groupe_buissons.create(2000, 0, "buisson1");
+    const pierre3 = this.groupe_buissons.create(1430, 0, "pierre");
+    this.physics.add.collider(this.groupe_buissons, calque2);
+
+    //création bouton rose et du score
+    bouton = this.physics.add.image(1200, 0, "img_bouton");
+    this.physics.add.collider(bouton, calque2);
+    this.physics.add.collider(player, bouton);
+
+    zone_texte_score = this.add.text(550, 16, 'score: 0', { fontSize: '32px', fill: '#000' }).setScrollFactor(0);
+    // overlap eau
+
+    calque2.setTileIndexCallback([61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72], this.gameOver, this);
+    this.physics.add.overlap(player, calque2);
+    this.physics.add.overlap(player, this.groupe_velo, this.ramasserVelo, null, this);
+
+    this.fin = this.physics.add.staticSprite(200, 0, "level_completed");
+
+
   }
+
+
   update() {
+    console.log("begin upd")
 
     if (clavier.right.isDown) {
       player.setVelocityX(160);
@@ -179,15 +152,20 @@ export default class velo extends Phaser.Scene {
       player.setVelocityX(-160);
       player.anims.play('anim_tourne_gauche', true);
     } else {
+      console.log("jarrivla")
+
       player.setVelocityX(0);
       player.anims.play('anim_face', true);
+      console.log("jesors")
     }
+
     if (clavier.up.isDown && player.body.onFloor()) {
       player.setVelocityY(-400);
       player.anims.play('anim_face', true);
     }
+    /*
     // activation du levier : on est dessus et on appuie sur espace
-    if (
+     if (
       Phaser.Input.Keyboard.JustDown(clavier.space) == true &&
       this.physics.overlap(player, levier) == true
     ) {
@@ -203,41 +181,43 @@ export default class velo extends Phaser.Scene {
         levier.flipX = true; // on tourne l'image du levier
         tween_mouvement.resume();  // on relance le tween
       }
-    }
-    /* Vérifier la collision entre le joueur et la pierre
-    const isColliding = this.physics.collide(player, mouvStone);
-    // Si la touche de déplacement de la pierre est enfoncée et il y a collision avec la pierre
-    if (Phaser.Input.Keyboard.JustDown(clavier.right.isDown) && isColliding) {
-        // Déplacer la pierre selon les contrôles du joueur
-       mouvStone.x += valeur; 
     }*/
-    if (clavier.up.isDown && player.body.onFloor()) {
-      player.setVelocityY(-400);
-      player.anims.play('anim_face', true);
+    
+    if ((clavier.down.isDown) && (this.physics.overlap(player, bouton))) {
+      this.appuyerSurBouton(player, groupe_buissons);
     }
-    // activation du levier : on est dessus et on appuie sur espace
-    if (
-      Phaser.Input.Keyboard.JustDown(clavier.space) == true &&
-      this.physics.overlap(mouvStone, bouton) == true
-    ) {
-      // si le levier etait activé, on le désactive et stoppe la plateforme
-      if (bouton.active == true) {
-        bouton.active = false; // on désactive le levier
-        bouton.flipX = false; // permet d'inverser l'image
-        tween_mouvement2.pause();  // on stoppe le tween
-      }
-      // sinon :  on l'active et stoppe la plateforme
-      else {
-        bouton.active = true; // on active le levier 
-        boutonvier.flipX = true; // on tourne l'image du levier
-        tween_mouvement2.resume();  // on relance le tween
-      }
+
+    if ((Phaser.Input.Keyboard.JustDown(clavier.space)) && (this.physics.overlap(player, this.fin))) {
+      this.finDeJeu();
     }
+    console.log("fin upd")
   }
 
-  chercher() {
+  gameOver() {
+    // Afficher l'image de game over
+    const gameOverImage = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 2, 'img_gameOver').setScrollFactor(0);
+    gameOverImage.setOrigin(0.5);
+    this.scene.pause();
+  }
 
+  appuyerSurBouton(joueur, buissons) {
+    buissons.disableBody(true, true);
+
+  }
+
+  ramasserVelo(une_player, un_velo) {
+    un_velo.disableBody(true, true);
+    score += 1;
+    zone_texte_score.setText(score + "/ 5 ");
+
+  }
+
+  finDeJeu() {
+    const gagner = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 2, 'img_fin').setScrollFactor(0);
+    gagner.setOrigin(0.5);
+    this.scene.pause();
   }
 
 }
+
 

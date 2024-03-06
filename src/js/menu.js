@@ -2,6 +2,7 @@
 var musique_de_fond;
 var clav;
 var bruit_de_click;
+import velo from "/src/js/velo.js"; 
 export default class menu extends Phaser.Scene {
     constructor() {
       super({ key: "menu" });
