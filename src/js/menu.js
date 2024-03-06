@@ -58,6 +58,7 @@ export default class menu extends Phaser.Scene {
         this.scene.start("transition1");
       });
 
+      musique_de_fond.stop();
 
       //paramétrage du bouton musiqueON
       bouton_musiqueOn.on("pointerover", () => {

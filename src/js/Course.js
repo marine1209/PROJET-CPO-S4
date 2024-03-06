@@ -4,6 +4,8 @@ var vies = 3; //pour la gestion des vies du joueur
 var coeur1;
 var coeur2;
 var coeur3;
+var musique_de_fond;
+var bruit_de_click;
 var monTimer;
 var groupe_bouteilles;
 var gameOver = false;
@@ -22,7 +24,9 @@ export default class Course extends Phaser.Scene {
   }
 
   preload() {
-    //chargement des images
+    //chargement des images et musiques
+    this.load.audio('musique_menu', 'src/assets/musique/musiqueIntro.OGG');  
+    this.load.audio('click_sound', 'src/assets/musique/zipclick.flac');
     this.load.image("level_completed", "src/assets/finished_line.png");
     this.load.image("tuile_terre1", "src/assets/image_course/1.png");
     this.load.image("tuile_terre2", "src/assets/image_course/2.png");
@@ -144,6 +148,32 @@ export default class Course extends Phaser.Scene {
     this.calque2.setTileIndexCallback([61,62,63,64,65,66,67,68,69,70,71,72], this.gameOver, this);
     this.physics.add.overlap(player, this.calque2);
     boutonNext=this.input.keyboard.addKey('A'); 
+
+    musique_de_fond = this.sound.add('musique_menu'); 
+    musique_de_fond.play();
+    bruit_de_click=this.sound.add("click_sound");
+    //on ajoute un bouton de clic, nommé bouton_play
+    var bouton_musiqueOn = this.add.image(700, 100, "imageMusiqueOn").setDepth(1).setScrollFactor(0);
+    bouton_musiqueOn.setInteractive();
+    //paramétrage du bouton musiqueON
+    bouton_musiqueOn.on("pointerover", () => {
+      bouton_musiqueOn.setScale(1.2);
+      //bouton_musiqueOff.setVisible(false);
+    });
+    bouton_musiqueOn.on('pointerout', ()=> {
+      bouton_musiqueOn.setScale(1);
+    });
+    bouton_musiqueOn.on("pointerup", () => {
+      bruit_de_click.play();
+      if (bouton_musiqueOn.texture.key === "imageMusiqueOn") {
+        bouton_musiqueOn.setTexture("imageMusiqueOff");
+        musique_de_fond.stop(); 
+    } else if (bouton_musiqueOn.texture.key === "imageMusiqueOff") {
+        bouton_musiqueOn.setTexture("imageMusiqueOn");
+        
+        musique_de_fond.play(); 
+    }
+    });
   }
   update() {
  

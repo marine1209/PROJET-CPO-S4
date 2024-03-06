@@ -24,7 +24,7 @@ var config = {
   
   },
   scene: [menu,transition1, natation, accueil_course, Course,accueil_velo,velo ] 
-  //scene: [menu, velo ] 
+  //scene: [menu, natation ] 
   
   
 };

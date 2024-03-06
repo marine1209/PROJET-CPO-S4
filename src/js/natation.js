@@ -7,10 +7,12 @@ var vies = 3; //pour la gestion des vies du joueur
 var coeur1;
 var coeur2;
 var coeur3;
+var bruit_de_click;
+var musique_de_fond;
 var groupe_bouteilles;
 var gameOver = false;
 var fin; 
-var monTimer;
+
 export default class natation extends Phaser.Scene {
     // constructeur de la classe
     constructor() {
@@ -28,7 +30,8 @@ export default class natation extends Phaser.Scene {
  * On y trouve surtout le chargement des assets (images, son ..)
  */
 preload() {
-    
+    this.load.audio('musique_natation', 'src/assets/musique/deep_sea.mp3');  
+    this.load.audio('click_sound', 'src/assets/musique/zipclick.flac');  
     this.load.image("img_coeur_plein", "src/assets/coeur_plein.png");
     this.load.image("img_coeur_vide", "src/assets/coeur_vide.png");
     this.load.image("bouteille", "src/assets/Water Bottle.png");
@@ -161,7 +164,32 @@ this.physics.add.collider(groupe_pyrhanas,calque_plateforme);
   coeur2 = this.add.image(120, 70, 'img_coeur_plein').setScrollFactor(0);;
   coeur3 = this.add.image(200, 70, 'img_coeur_plein').setScrollFactor(0);;
   this.fin =this.physics.add.staticSprite(3000,300,"level_completed");
-  //this.monTimer = this.time.addEvent({ delay: 10000, callback: this.chocAvecPyrahna, callbackScope: this, loop: true });
+  
+  musique_de_fond = this.sound.add('musique_natation'); 
+  musique_de_fond.play();
+  bruit_de_click=this.sound.add("click_sound");
+  //on ajoute un bouton de clic, nommé bouton_play
+  var bouton_musiqueOn = this.add.image(700, 100, "imageMusiqueOn").setDepth(1).setScrollFactor(0);
+  bouton_musiqueOn.setInteractive();
+  //paramétrage du bouton musiqueON
+  bouton_musiqueOn.on("pointerover", () => {
+    bouton_musiqueOn.setScale(1.2);
+    //bouton_musiqueOff.setVisible(false);
+  });
+  bouton_musiqueOn.on('pointerout', ()=> {
+    bouton_musiqueOn.setScale(1);
+  });
+  bouton_musiqueOn.on("pointerup", () => {
+    bruit_de_click.play();
+    if (bouton_musiqueOn.texture.key === "imageMusiqueOn") {
+      bouton_musiqueOn.setTexture("imageMusiqueOff");
+      musique_de_fond.stop(); 
+  } else if (bouton_musiqueOn.texture.key === "imageMusiqueOff") {
+      bouton_musiqueOn.setTexture("imageMusiqueOn");
+      
+      musique_de_fond.play(); 
+  }
+  });
  }
 /***********************************************************************/
 /** METHODE UPDATE 
@@ -201,6 +229,7 @@ update() {
        this.scene.start("accueil_course");
   
   } 
+  
   
 }
 

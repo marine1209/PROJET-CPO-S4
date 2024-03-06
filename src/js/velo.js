@@ -120,7 +120,7 @@ export default class velo extends Phaser.Scene {
     const selle = this.groupe_velo.create(160, 0, "img_selle");
     const roueAV = this.groupe_velo.create(1300, 0, "img_roueAV");
     const roueAR = this.groupe_velo.create(2500, 0, "img_roueAR");
-    const guidon = this.groupe_velo.create(10000, 0, "img_guidon");
+    const guidon = this.groupe_velo.create(2600, 0, "img_guidon");
     const pedale = this.groupe_velo.create(1430, 0, 'img_pedale');
     this.physics.add.collider(this.groupe_velo, calque2);
 
@@ -155,7 +155,7 @@ this.physics.add.collider(bouton2, calque2);
     this.physics.add.collider(player, plateforme3);
     plateforme3.body.allowGravity = false;
 
-    plateforme_descendante = this.physics.add.sprite(3000, 200, "img_BluePlatform");
+    plateforme_descendante = this.physics.add.sprite(1200, 200, "img_BluePlatform");
     this.physics.add.collider(player, plateforme_descendante);
     plateforme_descendante.body.allowGravity = false;
     plateforme_descendante.body.immovable = true;
@@ -191,14 +191,14 @@ this.physics.add.collider(bouton2, calque2);
       delay: 0,     // délai avant le début du tween une fois ce dernier activé
       hold: 1000,   // délai avant le yoyo : temps qeu al plate-forme reste en haut
       repeatDelay: 1000, // deléi avant la répétition : temps que la plate-forme reste en bas
-      repeat: 1 // répétition infinie 
+      repeat: -1 // répétition infinie 
     });
 
     levier = this.physics.add.staticSprite(700, 538, "img_levier");
     levier.active = false;
     this.physics.add.collider(levier, calque2);
     boutonNext=this.input.keyboard.addKey('A');
-
+    
 
   }
 
@@ -220,10 +220,10 @@ this.physics.add.collider(bouton2, calque2);
       player.setVelocityY(-400);
       player.anims.play('anim_face', true);
     }
-    /*
+    
     // activation du levier : on est dessus et on appuie sur espace
      if (
-      Phaser.Input.Keyboard.JustDown(clavier.space) == true &&
+      Phaser.Input.Keyboard.JustDown(boutonNext) == true &&
       this.physics.overlap(player, levier) == true
     ) {
       // si le levier etait activé, on le désactive et stoppe la plateforme
@@ -239,7 +239,8 @@ this.physics.add.collider(bouton2, calque2);
         tween_mouvement.resume();  // on relance le tween
       }
     
-    }*/
+    }
+
     if (
       Phaser.Input.Keyboard.JustDown(clavier.space) == true &&
       this.physics.overlap(player, bouton) == true
