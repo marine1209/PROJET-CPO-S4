@@ -2,7 +2,7 @@
 var player; //designe le sprite du joueur
 var clavier; //pour la gestion du clavier
 var boutonChercher;
-var groupe_buissons
+var groupe_velo; 
 export default class velo extends Phaser.Scene {
 
     constructor(){
@@ -93,9 +93,15 @@ create(){
       this.physics.add.collider (player, calque2);
      /** CREATION DU CLAVIER **/  
   clavier = this.input.keyboard.createCursorKeys();
-
+     // création groupe_vélo 
+     /*
+     this.groupe_velo = this.physics.add.group();
+     const selle = this.groupe_velo.create(160,96,"img_selle"); 
+     const roueAV = this.groupe_velo.create (1344, 160, "img_roueAV");
+     const roueAR = this.groupe_velo.create (130, 96, "img_roueAR");
+     const guidon = this.groupe_velo.create (80, 50, "img_guidon");
   boutonChercher = this.input.keyboard.addKey('A'); 
-  groupe_buissons = this.add.image(400,600, "buisson1");
+  this.physics.add.collider(groupe_velo, calque2);*/
 }
 update (){
   
