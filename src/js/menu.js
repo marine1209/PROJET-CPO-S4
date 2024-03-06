@@ -2,6 +2,7 @@
 var musique_de_fond;
 var clav;
 var bruit_de_click;
+import velo from "/src/js/velo.js"; 
 export default class menu extends Phaser.Scene {
     constructor() {
       super({ key: "menu" });
@@ -54,7 +55,7 @@ export default class menu extends Phaser.Scene {
       //Cas ou la souris clique sur le bouton play :
       bouton_play.on("pointerup", () => {
         bruit_de_click.play();
-        this.scene.start("course");
+        this.scene.start("velo");
       });
 
 

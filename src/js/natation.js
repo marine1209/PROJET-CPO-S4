@@ -9,8 +9,7 @@ var coeur2;
 var coeur3;
 var groupe_bouteilles;
 var gameOver = false;
-var fin;
-import Course from "/src/js/Course.js"; 
+var fin; 
 
 export default class natation extends Phaser.Scene {
     // constructeur de la classe

@@ -19,7 +19,7 @@ var config = {
     }
   
   },
-  scene: [menu,Course, velo, natation ] 
+  scene: [menu, velo, Course,  natation ] 
   
 };
 
