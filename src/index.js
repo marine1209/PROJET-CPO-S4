@@ -6,6 +6,7 @@ import transition1 from "/src/js/transition1.js";
 import accueil_course from "/src/js/accueil_course.js";
 import accueil_velo from "/src/js/accueil_velo.js";
 
+
 var config = {
   type: Phaser.AUTO,
   width: 800, // largeur en pixels
@@ -22,8 +23,8 @@ var config = {
     }
   
   },
-  scene: [menu,transition1, natation, accueil_course, Course, accueil_velo,velo ] 
-  //scene: [menu,transition1, natation, accueil_course, Course,velo ] 
+  scene: [menu,transition1, natation, accueil_course, Course,accueil_velo,velo ] 
+  //scene: [menu, velo ] 
   
   
 };

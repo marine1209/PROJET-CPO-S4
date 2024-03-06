@@ -9,7 +9,8 @@ var groupe_bouteilles;
 var gameOver = false;
 var ramassageEnCours; 
 var fin; 
-
+var boutonNext;
+//import accueil_velo from "/src/accueil_velo";
 export default class Course extends Phaser.Scene {
 
   constructor() {
@@ -142,6 +143,7 @@ export default class Course extends Phaser.Scene {
     // overlap eau
     this.calque2.setTileIndexCallback([61,62,63,64,65,66,67,68,69,70,71,72], this.gameOver, this);
     this.physics.add.overlap(player, this.calque2);
+    boutonNext=this.input.keyboard.addKey('A'); 
   }
   update() {
  
@@ -162,7 +164,6 @@ export default class Course extends Phaser.Scene {
     }
     
     if((Phaser.Input.Keyboard.JustDown(boutonNext))&&(this.physics.overlap(player, this.fin))){
-      
       this.scene.start("accueil_velo");
     } 
 
@@ -177,11 +178,7 @@ export default class Course extends Phaser.Scene {
           }
       });
     }
-    if (Phaser.Input.Keyboard.JustDown(clavier.space) == true && (this.physics.overlap(player, this.fin)) ) {
     
-      this.scene.start("acceuil_course"); 
- 
- } 
    //ramasser les bouteilles
     this.physics.add.overlap(player, groupe_bouteilles, this.ramasserBouteille, null, this);
         if (gameOver) {

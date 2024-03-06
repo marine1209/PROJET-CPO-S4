@@ -4,8 +4,15 @@ var clavier; //pour la gestion du clavier
 var groupe_buissons;
 var bouton_disparaitre;
 var bouton;
-var score;
+var bouton2;
+var score=0;
+var plateforme_descendante;
+var plateforme_mobile;;
 var zone_texte_score;
+var tween_mouvement;
+var tween_mouvement2;
+var levier;
+var mouvStone;
 export default class velo extends Phaser.Scene {
 
   constructor() {
@@ -125,18 +132,64 @@ export default class velo extends Phaser.Scene {
     this.physics.add.collider(this.groupe_buissons, calque2);
 
     //création bouton rose et du score
-    bouton = this.physics.add.image(1200, 0, "img_bouton");
-    this.physics.add.collider(bouton, calque2);
-    this.physics.add.collider(player, bouton);
+    bouton2 = this.physics.add.staticSprite(1200, 350, "img_bouton");
+    this.physics.add.collider(bouton2, calque2);
+    //this.physics.add.collider(player, bouton2);
+    bouton2.active = false;
+    
 
-    zone_texte_score = this.add.text(550, 16, 'score: 0', { fontSize: '32px', fill: '#000' }).setScrollFactor(0);
+    zone_texte_score = this.add.text(550, 16, score, { fontSize: '32px', fill: '#000' }).setScrollFactor(0);
     // overlap eau
 
     calque2.setTileIndexCallback([61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72], this.gameOver, this);
     this.physics.add.overlap(player, calque2);
     this.physics.add.overlap(player, this.groupe_velo, this.ramasserVelo, null, this);
 
-    this.fin = this.physics.add.staticSprite(200, 0, "level_completed");
+    this.fin = this.physics.add.staticSprite(300, 500, "level_completed");
+    
+    
+    plateforme_descendante = this.physics.add.sprite(3000, 200, "img_BluePlatform");
+    this.physics.add.collider(player, plateforme_descendante);
+    plateforme_descendante.body.allowGravity = false;
+    plateforme_descendante.body.immovable = true;
+    tween_mouvement2 = this.tweens.add({
+      targets: [plateforme_descendante],  // on applique le tween sur platefprme_mobile
+      paused: true, // de base le tween est en pause
+      ease: "Linear",  // concerne la vitesse de mouvement : linéaire ici 
+      duration: 2000,  // durée de l'animation pour monter 
+      yoyo: true,   // mode yoyo : une fois terminé on "rembobine" le déplacement 
+      y: "+=300",   // on va déplacer la plateforme de 300 pixel vers le haut par rapport a sa position
+      delay: 0,     // délai avant le début du tween une fois ce dernier activé
+      hold: 1000,   // délai avant le yoyo : temps qeu al plate-forme reste en haut
+      repeatDelay: 1000, // deléi avant la répétition : temps que la plate-forme reste en bas
+      repeat: -1 // répétition infinie 
+    });
+    this.physics.add.collider(player, plateforme_descendante);
+    bouton = this.physics.add.staticSprite(2600, 500, "img_bouton");
+    bouton.active = false;
+    this.physics.add.collider(bouton, calque2);
+
+    plateforme_mobile = this.physics.add.sprite(350, 450, "img_BluePlatform");
+    this.physics.add.collider(player, plateforme_mobile);
+    plateforme_mobile.body.allowGravity = false;
+    plateforme_mobile.body.immovable = true;
+
+    tween_mouvement = this.tweens.add({
+      targets: [plateforme_mobile],  // on applique le tween sur platefprme_mobile
+      paused: true, // de base le tween est en pause
+      ease: "Linear",  // concerne la vitesse de mouvement : linéaire ici 
+      duration: 2000,  // durée de l'animation pour monter 
+      yoyo: true,   // mode yoyo : une fois terminé on "rembobine" le déplacement 
+      y: "-=300",   // on va déplacer la plateforme de 300 pixel vers le haut par rapport a sa position
+      delay: 0,     // délai avant le début du tween une fois ce dernier activé
+      hold: 1000,   // délai avant le yoyo : temps qeu al plate-forme reste en haut
+      repeatDelay: 1000, // deléi avant la répétition : temps que la plate-forme reste en bas
+      repeat: 1 // répétition infinie 
+    });
+
+    levier = this.physics.add.staticSprite(700, 538, "img_levier");
+    levier.active = false;
+    this.physics.add.collider(levier, calque2);
 
 
   }
@@ -158,14 +211,11 @@ export default class velo extends Phaser.Scene {
       player.anims.play('anim_face', true);
       console.log("jesors")
     }
-
     if (clavier.up.isDown && player.body.onFloor()) {
-      player.setVelocityY(-400);
-      player.anims.play('anim_face', true);
-    }
-    /*
-    // activation du levier : on est dessus et on appuie sur espace
-     if (
+          player.setVelocityY(-400);
+          player.anims.play('anim_face', true);
+        }
+    /*if (
       Phaser.Input.Keyboard.JustDown(clavier.space) == true &&
       this.physics.overlap(player, levier) == true
     ) {
@@ -181,18 +231,52 @@ export default class velo extends Phaser.Scene {
         levier.flipX = true; // on tourne l'image du levier
         tween_mouvement.resume();  // on relance le tween
       }
+
     }*/
+    if (
+      Phaser.Input.Keyboard.JustDown(clavier.space) == true &&
+      this.physics.overlap(player, bouton) == true
+    ) {
+      // si le levier etait activé, on le désactive et stoppe la plateforme
+      if (bouton.active == true) {
+        bouton.active = false; // on désactive le levier
+        bouton.flipX = false; // permet d'inverser l'image
+        tween_mouvement2.pause();  // on stoppe le tween
+      }
+      // sinon :  on l'active et stoppe la plateforme
+      else {
+        bouton.active = true; // on active le levier 
+        bouton.flipX = true; // on tourne l'image du levier
+        tween_mouvement2.resume();  // on relance le tween
+      }
+
+    }
     
-    if ((clavier.down.isDown) && (this.physics.overlap(player, bouton))) {
-      this.appuyerSurBouton(player, groupe_buissons);
+    if ((clavier.down.isDown)&&(this.physics.overlap(player, bouton2) == true) ) {
+      console.log("bouton")
+      if (bouton2.active == true) {
+        bouton2.active = false; // on désactive le levier
+        bouton2.flipX = false; // permet d'inverser l'image
+        //this.groupe_buissons.disableBody(true,true);
+        this.appuyerSurBouton(player, this.groupe_buissons);
+      }
+      // sinon :  on l'active et stoppe la plateforme
+      else {
+        bouton2.active = true; // on active le levier 
+        bouton2.flipX = true; // on tourne l'image du levier
+        console.log("pas bputon")
+      }
+      //this.appuyerSurBouton(player, groupe_buissons);
     }
 
     if ((Phaser.Input.Keyboard.JustDown(clavier.space)) && (this.physics.overlap(player, this.fin))) {
+      console.log("coucou");
       this.finDeJeu();
+
     }
     console.log("fin upd")
+  
   }
-
   gameOver() {
     // Afficher l'image de game over
     const gameOverImage = this.add.image(this.cameras.main.width / 2, this.cameras.main.height / 2, 'img_gameOver').setScrollFactor(0);
@@ -201,14 +285,18 @@ export default class velo extends Phaser.Scene {
   }
 
   appuyerSurBouton(joueur, buissons) {
-    buissons.disableBody(true, true);
+    //buissons.disableBody(true, true);
+    buissons.setVisible(false);
 
   }
 
   ramasserVelo(une_player, un_velo) {
     un_velo.disableBody(true, true);
-    score += 1;
-    zone_texte_score.setText(score + "/ 5 ");
+    //un_velo.setVisible(false);
+    this.score += 1;
+   
+    this.zone_texte_score.setText(550, 16, this.score + '/5', { fontSize: '32px', fill: '#000' }).setScrollFactor(0);
+    //zone_texte_score.setText(score + "/ 5 ");
 
   }
 

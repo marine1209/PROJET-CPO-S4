@@ -1,0 +1,87 @@
+
+var player; //designe le sprite du joueur
+var clavier; //pour la gestion du clavier
+var levier;
+var plateforme_mobile;
+var bouton;
+var tween_mouvement; 
+var tween_mouvement2; 
+var boutonChercher;
+var groupe_buissons
+var plateforme_descendante;
+var mouvStone;
+var bouton_disparaitre;
+var score;
+var zone_texte_score;
+export default class velo extends Phaser.Scene {
+
+  constructor() {
+    super({
+      key: "velo"
+    });
+  }
+
+  preload() {
+    //chargement des images
+    this.load.image("pierre2", "src/assets/image_velo/rocherMouv.png");
+    this.load.image("img_levierOn", "src/assets/image_velo/levier_on.png");
+    this.load.image("img_levierOff", "src/assets/image_velo/levier_off.png");
+    this.load.image("img_bouton", "src/assets/image_velo/bouton_rose.png");
+    this.load.image("img_BluePlatform", "src/assets/image_velo/blue_platform.png");
+    this.load.image("img_levier", "src/assets/image_velo/levier.png");
+    this.load.image("img_selle", "src/assets/image_velo/selle.png");
+    this.load.image("img_guidon", "src/assets/image_velo/guidon.png");
+    this.load.image("img_roueAR", "src/assets/image_velo/roue_arriere.png");
+    this.load.image("img_roueAV", "src/assets/image_velo/roue_avant.png");
+    this.load.image("img_pedale", "src/assets/image_velo/pedale.png");
+    this.load.image("tuile_terre1", "src/assets/image_course/1.png");
+    this.load.image("tuile_terre2", "src/assets/image_course/2.png");
+    this.load.image("tuile_terre3", "src/assets/image_course/3.png");
+    this.load.image("tuile_terre5", "src/assets/image_course/5.png");
+    this.load.image("tuile_terre13", "src/assets/image_course/13.png");
+    this.load.image("tuile_terre14", "src/assets/image_course/14.png");
+    this.load.image("tuile_terre15", "src/assets/image_course/15.png");
+    this.load.image("eau", "src/assets/image_course/17.png");
+    this.load.image("background", "src/assets/image_course/BG.png");
+    this.load.image("buisson1", "src/assets/image_course/Bush.png");
+    this.load.image("pierre", "src/assets/image_course/Stone.png");
+    this.load.image("arbre1", "src/assets/image_course/Tree_2.png");
+    this.load.tilemapTiledJSON("carte_velo", "src/assets/image_velo/MAP VELO.tmj");
+    this.load.spritesheet("img_perso", "src/assets/sportif.png", {
+      frameWidth: 48,
+      frameHeight: 72
+    });
+    this.load.image("img_coeur_plein", "src/assets/coeur_plein.png")
+    this.load.image("img_coeur_vide", "src/assets/coeur_vide.png")
+    this.load.image('bouteille', "src/assets/Water Bottle.png")
+    this.load.image('img_gameOver', "src/assets/game_over.png")
+    this.load.image('img_bouton', "src/assets/bouton_rose.png")
+    this.load.image("level_completed", "src/assets/finished_line.png")
+    this.load.image('img_fin', "src/assets/image_fin.png")
+
+  }
+
+  create() {
+ console.log("begin create")
+    //création de la map
+    const map = this.add.tilemap("carte_velo");
+    const tileset1 = map.addTilesetImage("13", "tuile_terre13");
+    const tileset2 = map.addTilesetImage("15", "tuile_terre15");
+    const tileset3 = map.addTilesetImage("BG", "background");
+    const tileset5 = map.addTilesetImage("eau", "eau");
+    const tileset7 = map.addTilesetImage("terre", "tuile_terre2");
+    const tileset8 = map.addTilesetImage("terre1", "tuile_terre1");
+    const tileset9 = map.addTilesetImage("terre2", "tuile_terre3");
+    const tileset10 = map.addTilesetImage("terre3", "tuile_terre5");
+    const calque1 = map.createLayer("arrière plan", [tileset3]);
+    const calque2 = map.createLayer("terre", [tileset1, tileset7, tileset8, tileset9, tileset10, tileset2, tileset5]);
+
+    //creation des colisions 
+    calque2.setCollisionByProperty({ estSolide: true });
+    //creation des animations pour le personnage
+
+    player = this.physics.add.sprite(100, 450, "img_perso");
+    
+    player.setCollideWorldBounds(true);
+    player.body.onWorldBounds = true;
+    this.anims.create({
