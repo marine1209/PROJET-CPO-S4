@@ -2,7 +2,7 @@
 var player; //designe le sprite du joueur
 var clavier; //pour la gestion du clavier
 var boutonChercher;
-var groupe_velo; 
+var groupe_buissons
 export default class velo extends Phaser.Scene {
 
     constructor(){
@@ -13,6 +13,9 @@ export default class velo extends Phaser.Scene {
 
 preload (){
   //chargement des images
+  this.load.image("img_levierOn", "src/assets/image_velo/levier_on.png");
+  this.load.image("img_levierOff", "src/assets/image_velo/levier_off.png");
+  this.load.image("img_bouton", "src/assets/image_velo/bouton_rose.png");
   this.load.image("img_BluePlatform", "src/assets/image_velo/blue_platform.png");
   this.load.image("img_levier", "src/assets/image_velo/levier.png");
   this.load.image("img_selle", "src/assets/image_velo/selle.png");
@@ -101,7 +104,7 @@ create(){
      const roueAR = this.groupe_velo.create (130, 96, "img_roueAR");
      const guidon = this.groupe_velo.create (80, 50, "img_guidon");
   boutonChercher = this.input.keyboard.addKey('A'); 
-  this.physics.add.collider(groupe_velo, calque2);*/
+  groupe_buissons = this.add.image(400,600, "buisson1");
 }
 update (){
   
@@ -119,6 +122,24 @@ update (){
     player.setVelocityY(-400);
     player.anims.play('anim_face', true);
   }
+   // activation du levier : on est dessus et on appuie sur espace
+   if (
+    Phaser.Input.Keyboard.JustDown(clavier.space) == true &&
+    this.physics.overlap(player, levier) == true
+  ) {
+    // si le levier etait activé, on le désactive et stoppe la plateforme
+    if (levier.active == true) {
+      levier.active = false; // on désactive le levier
+      levier.flipX = false; // permet d'inverser l'image
+      tween_mouvement.pause();  // on stoppe le tween
+    }
+    // sinon :  on l'active et stoppe la plateforme
+    else {
+      levier.active = true; // on active le levier 
+      levier.flipX = true; // on tourne l'image du levier
+      tween_mouvement.resume();  // on relance le tween
+    }
+  } 
   if ( Phaser.Input.Keyboard.JustDown(boutonChercher)) {
     tirer(player);
   } 
