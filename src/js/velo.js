@@ -3,9 +3,13 @@ var player; //designe le sprite du joueur
 var clavier; //pour la gestion du clavier
 var levier;
 var plateforme_mobile;
+var bouton;
 var tween_mouvement; 
+var tween_mouvement2; 
 var boutonChercher;
 var groupe_buissons
+var plateforme_descendante;
+var mouvStone;
 export default class velo extends Phaser.Scene {
 
     constructor(){
@@ -16,6 +20,7 @@ export default class velo extends Phaser.Scene {
 
 preload (){
   //chargement des images
+  this.load.image("pierre2", "src/assets/image_velo/rocherMouv.png");
   this.load.image("img_levierOn", "src/assets/image_velo/levier_on.png");
   this.load.image("img_levierOff", "src/assets/image_velo/levier_off.png");
   this.load.image("img_bouton", "src/assets/image_velo/bouton_rose.png");
@@ -69,6 +74,7 @@ create(){
     calque2.setCollisionByProperty({estSolide : true});
     //creation des animations pour le personnage
     player = this.physics.add.sprite(100, 450, "img_perso");
+    
     player.setCollideWorldBounds(true);
     player.body.onWorldBounds = true;
     this.anims.create({
@@ -98,9 +104,39 @@ create(){
       this.cameras.main.startFollow(player);
       this.physics.add.collider (player, calque2);
      /** CREATION DU CLAVIER **/  
+      mouvStone=this.physics.add.image(2400, 480, "pierre2");
+      this.physics.add.collider(mouvStone, player);
+      this.physics.add.collider(mouvStone, calque2);
+
   clavier = this.input.keyboard.createCursorKeys();
+  plateforme_descendante = this.physics.add.sprite(3000,500,"img_BluePlatform"); 
+  this.physics.add.collider(player, plateforme_descendante);
+  plateforme_descendante.body.allowGravity = false;
+  plateforme_descendante.body.immovable = true; 
+  tween_mouvement2 = this.tweens.add({
+    targets: [plateforme_descendante],  // on applique le tween sur platefprme_mobile
+    paused: true, // de base le tween est en pause
+    ease: "Linear",  // concerne la vitesse de mouvement : linéaire ici 
+    duration: 2000,  // durée de l'animation pour monter 
+    yoyo: true,   // mode yoyo : une fois terminé on "rembobine" le déplacement 
+    y: "+=300",   // on va déplacer la plateforme de 300 pixel vers le haut par rapport a sa position
+    delay: 0,     // délai avant le début du tween une fois ce dernier activé
+    hold: 1000,   // délai avant le yoyo : temps qeu al plate-forme reste en haut
+    repeatDelay: 1000, // deléi avant la répétition : temps que la plate-forme reste en bas
+    repeat: -1 // répétition infinie 
+  });
+  this.physics.add.collider(player,plateforme_descendante);
+  bouton = this.physics.add.staticSprite(2600, 500, "img_bouton"); 
+  bouton.active = false;
+  this.physics.add.collider(bouton,calque2);
   
-  plateforme_mobile = this.physics.add.sprite(350,450,"img_BluePlatform"); 
+  
+  //mouvStone.setImmovable(true);
+  
+
+
+  plateforme_mobile = this.physics.add.sprite(350,450,"img_BluePlatform");
+  this.physics.add.collider(player,plateforme_mobile); 
   plateforme_mobile.body.allowGravity = false;
   plateforme_mobile.body.immovable = true; 
   
@@ -116,10 +152,14 @@ create(){
     repeatDelay: 1000, // deléi avant la répétition : temps que la plate-forme reste en bas
     repeat: -1 // répétition infinie 
   });
-  this.physics.add.collider(player,plateforme_mobile);
+  
   levier = this.physics.add.staticSprite(700, 538, "img_levier"); 
   levier.active = false;
   this.physics.add.collider(levier,calque2);
+  
+
+ 
+  //this.HideStone.sendToBack();
      // création groupe_vélo 
      /*
      this.groupe_velo = this.physics.add.group();
@@ -162,6 +202,35 @@ update (){
       levier.active = true; // on active le levier 
       levier.flipX = true; // on tourne l'image du levier
       tween_mouvement.resume();  // on relance le tween
+    }
+  } 
+  /* Vérifier la collision entre le joueur et la pierre
+  const isColliding = this.physics.collide(player, mouvStone);
+  // Si la touche de déplacement de la pierre est enfoncée et il y a collision avec la pierre
+  if (Phaser.Input.Keyboard.JustDown(clavier.right.isDown) && isColliding) {
+      // Déplacer la pierre selon les contrôles du joueur
+     mouvStone.x += valeur; 
+  }*/
+  if (clavier.up.isDown && player.body.onFloor()) {
+    player.setVelocityY(-400);
+    player.anims.play('anim_face', true);
+  }
+    // activation du levier : on est dessus et on appuie sur espace
+  if (
+    Phaser.Input.Keyboard.JustDown(clavier.space) == true &&
+    this.physics.overlap(mouvStone, bouton) == true
+  ) {
+    // si le levier etait activé, on le désactive et stoppe la plateforme
+    if (bouton.active == true) {
+      bouton.active = false; // on désactive le levier
+      bouton.flipX = false; // permet d'inverser l'image
+      tween_mouvement2.pause();  // on stoppe le tween
+    }
+    // sinon :  on l'active et stoppe la plateforme
+    else {
+      bouton.active = true; // on active le levier 
+      boutonvier.flipX = true; // on tourne l'image du levier
+      tween_mouvement2.resume();  // on relance le tween
     }
   } 
 }
