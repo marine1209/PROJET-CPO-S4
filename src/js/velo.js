@@ -1,6 +1,9 @@
 
 var player; //designe le sprite du joueur
 var clavier; //pour la gestion du clavier
+var levier;
+var plateforme_mobile;
+var tween_mouvement; 
 var boutonChercher;
 var groupe_buissons
 export default class velo extends Phaser.Scene {
@@ -96,6 +99,27 @@ create(){
       this.physics.add.collider (player, calque2);
      /** CREATION DU CLAVIER **/  
   clavier = this.input.keyboard.createCursorKeys();
+  
+  plateforme_mobile = this.physics.add.sprite(350,450,"img_BluePlatform"); 
+  plateforme_mobile.body.allowGravity = false;
+  plateforme_mobile.body.immovable = true; 
+  
+  tween_mouvement = this.tweens.add({
+    targets: [plateforme_mobile],  // on applique le tween sur platefprme_mobile
+    paused: true, // de base le tween est en pause
+    ease: "Linear",  // concerne la vitesse de mouvement : linéaire ici 
+    duration: 2000,  // durée de l'animation pour monter 
+    yoyo: true,   // mode yoyo : une fois terminé on "rembobine" le déplacement 
+    y: "-=300",   // on va déplacer la plateforme de 300 pixel vers le haut par rapport a sa position
+    delay: 0,     // délai avant le début du tween une fois ce dernier activé
+    hold: 1000,   // délai avant le yoyo : temps qeu al plate-forme reste en haut
+    repeatDelay: 1000, // deléi avant la répétition : temps que la plate-forme reste en bas
+    repeat: -1 // répétition infinie 
+  });
+  this.physics.add.collider(player,plateforme_mobile);
+  levier = this.physics.add.staticSprite(700, 538, "img_levier"); 
+  levier.active = false;
+  this.physics.add.collider(levier,calque2);
      // création groupe_vélo 
      /*
      this.groupe_velo = this.physics.add.group();
@@ -122,8 +146,8 @@ update (){
     player.setVelocityY(-400);
     player.anims.play('anim_face', true);
   }
-   // activation du levier : on est dessus et on appuie sur espace
-   if (
+    // activation du levier : on est dessus et on appuie sur espace
+  if (
     Phaser.Input.Keyboard.JustDown(clavier.space) == true &&
     this.physics.overlap(player, levier) == true
   ) {
@@ -140,19 +164,11 @@ update (){
       tween_mouvement.resume();  // on relance le tween
     }
   } 
-  if ( Phaser.Input.Keyboard.JustDown(boutonChercher)) {
-    tirer(player);
-  } 
-
 }
-tirer(player) {
-  // mesasge d'alerte affichant les attributs de player
-alert ("joueur en position"+player.x + ","+player.y ) ; 
-} 
-/*
+ 
 chercher(){
   
 }
-*/
+
 }
 

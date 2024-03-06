@@ -8,8 +8,8 @@ var monTimer;
 var groupe_bouteilles;
 var gameOver = false;
 var ramassageEnCours; 
-//var boutonNext;
-
+var boutonNext;
+import accueil_velo from "/src/js/accueil_velo.js"; 
 export default class Course extends Phaser.Scene {
 
   constructor() {
@@ -144,7 +144,8 @@ export default class Course extends Phaser.Scene {
     const claquette = this.groupe_chaussures.create(300, 400, 'img_claquette');
     
     this.fin =this.physics.add.staticSprite(200,400,"level_completed");
-    //boutonNext = this.input.keyboard.addKey('A'); 
+    boutonNext = this.input.keyboard.addKey('A'); 
+    console.log(boutonNext);
     
   }
   update() {
@@ -164,6 +165,12 @@ export default class Course extends Phaser.Scene {
     if (clavier.up.isDown && player.body.blocked.down) {
       player.setVelocityY(-player.maxVY);
     }
+    
+    if((Phaser.Input.Keyboard.JustDown(boutonNext))&&(this.physics.overlap(player, this.fin))){
+      
+      this.scene.start("accueil_velo");
+    } 
+
     if (clavier.space.isDown){
       // Parcourir chaque chaussure dans le groupe de chaussures
       this.groupe_chaussures.getChildren().forEach(chaussure => {
@@ -175,12 +182,6 @@ export default class Course extends Phaser.Scene {
           }
       });
     }
-    /*
-    if (Phaser.Input.Keyboard.JustDown(clavier.boutonNext) == true && (this.physics.overlap(player, this.fin)) ) {
-    
-      this.scene.start("accueil_velo");
- 
- }*/ 
     
    //ramasser les bouteilles
     this.physics.add.overlap(player, groupe_bouteilles, this.ramasserBouteille, null, this);

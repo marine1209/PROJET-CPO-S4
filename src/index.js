@@ -23,6 +23,8 @@ var config = {
   
   },
   scene: [menu,transition1, natation, accueil_course, Course, accueil_velo,velo ] 
+  //scene: [menu,transition1, natation, accueil_course, Course,velo ] 
+  
   
 };
 
