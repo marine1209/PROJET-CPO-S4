@@ -70,7 +70,7 @@ export default class Course extends Phaser.Scene {
     const calque1 = map.createLayer("arrière plan", [tileset3]);
     this.calque2 = map.createLayer("terre", [tileset1, tileset7, tileset8, tileset9, tileset10, tileset2, tileset5]);
     const calque3 = map.createLayer("arbres et buissons", [tileset11, tileset4, tileset6]);
-    this.fin =this.physics.add.staticSprite(200,400,"level_completed");
+    this.fin =this.physics.add.staticSprite(3000,580,"level_completed");
 
     //creation des colisions 
     this.calque2.setCollisionByProperty({ estSolide: true });
@@ -137,8 +137,8 @@ export default class Course extends Phaser.Scene {
     this.groupe_chaussures = this.physics.add.group();
     this.physics.add.collider(this.groupe_chaussures, this.calque2);
     const basket = this.groupe_chaussures.create(100, 400, 'img_basket');
-    const talon = this.groupe_chaussures.create(500, 400, 'img_talon');
-    const claquette = this.groupe_chaussures.create(700, 400, 'img_claquette');
+    const talon = this.groupe_chaussures.create(2000, 400, 'img_talon');
+    const claquette = this.groupe_chaussures.create(2500, 100, 'img_claquette');
 
     // overlap eau
     this.calque2.setTileIndexCallback([61,62,63,64,65,66,67,68,69,70,71,72], this.gameOver, this);

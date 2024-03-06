@@ -10,7 +10,7 @@ var coeur3;
 var groupe_bouteilles;
 var gameOver = false;
 var fin; 
-
+var monTimer;
 export default class natation extends Phaser.Scene {
     // constructeur de la classe
     constructor() {
@@ -77,18 +77,7 @@ preload() {
  const calque_plateforme = carte_natation.createLayer("calque_plateforme",tileset);  
 
  calque_plateforme.setCollisionByProperty({ estSolide: true });
- /*
- var imageOn=this.add.image(400,300,"img_livre");
- var buttonOn=this.add.image(750,500,"img_boutonFerme");
- buttonOn.setInteractive();
- buttonOn.on('pointerdown', () => {
-  // Faire disparaître l'image
-  buttonOn.setScale(1.2);
-  buttonOn.visible = false;
-  imageOn.visible=false;
-
-});
-*/
+ 
 /** ANIMATIONS **/
   // dans cette partie, on crée les animations, à partir des spritesheet
   // chaque animation est une succession de frame à vitesse de défilement défini
@@ -135,7 +124,8 @@ this.physics.add.collider(player, calque_plateforme);
     frames: [{ key: "img_perso", frame: 4 }],
     frameRate: 20
   });
-  
+  player.maxVX = 160;
+  player.maxVY = -300;
 
 for (var i=0;i<7; i++){
   var coordX=Phaser.Math.Between(0,3200);
@@ -170,8 +160,8 @@ this.physics.add.collider(groupe_pyrhanas,calque_plateforme);
   coeur1 = this.add.image(40, 70, 'img_coeur_plein').setScrollFactor(0);
   coeur2 = this.add.image(120, 70, 'img_coeur_plein').setScrollFactor(0);;
   coeur3 = this.add.image(200, 70, 'img_coeur_plein').setScrollFactor(0);;
-  this.fin =this.physics.add.staticSprite(200,400,"level_completed");
-  
+  this.fin =this.physics.add.staticSprite(3000,300,"level_completed");
+  //this.monTimer = this.time.addEvent({ delay: 10000, callback: this.chocAvecPyrahna, callbackScope: this, loop: true });
  }
 /***********************************************************************/
 /** METHODE UPDATE 
@@ -180,17 +170,17 @@ this.physics.add.collider(groupe_pyrhanas,calque_plateforme);
 update() {
 
     if (clavier.right.isDown) {
-      player.setVelocityX(160);
+      player.setVelocityX(player.maxVX);
       player.anims.play('anim_tourne_droite', true);
     }else if (clavier.left.isDown) {
-      player.setVelocityX(-160);
+      player.setVelocityX(-player.maxVX);
       player.anims.play('anim_tourne_gauche', true);
     }else {
       player.setVelocityX(0);
       player.anims.play('anim_face', true);
     } 
     if (clavier.up.isDown && player.body.onFloor()) {
-      player.setVelocityY(-300);
+      player.setVelocityY(player.maxVY);
       player.anims.play('anim_face', true);
     }
    
@@ -214,16 +204,21 @@ update() {
   
 }
 
-/*
-chocAvecBombe(un_player, une_bombe) {
-  this.physics.pause();
-  player.setTint(0xff0000);
-  player.anims.play("anim_face");
-  gameOver = true;
-}*/
 
-chocAvecPyrahna(player, pyrahna) {
-  pyrahna.disableBody(true, true);
+chocAvecPyrahna(un_player, un_pyrahna) {
+  un_pyrahna.disableBody(true, true);
+  un_player.setTint(0xff0000);
+  this.physics.pause();
+  // Utiliser un délai pour restaurer la couleur et la vitesse du joueur après 10 secondes
+  this.time.delayedCall(8000, () => {
+    
+    un_player.clearTint();// Réinitialiser la couleur du joueur
+  
+    // Reprendre la physique du jeu
+    this.physics.resume();
+  }, null, this);
+  
+
   this.perdreUneVie();
 
   }
@@ -253,6 +248,7 @@ perdreUneVie() {
 
   ramasserBouteille(un_player, une_bouteille) {
     une_bouteille.disableBody(true, true);
+    un_player.clearTint();
     this.GagnerUneVie();
   }
 
