@@ -104,7 +104,7 @@ create(){
      const roueAR = this.groupe_velo.create (130, 96, "img_roueAR");
      const guidon = this.groupe_velo.create (80, 50, "img_guidon");
   boutonChercher = this.input.keyboard.addKey('A'); 
-  groupe_buissons = this.add.image(400,600, "buisson1");
+  groupe_buissons = this.add.image(400,600, "buisson1");*/
 }
 update (){
   

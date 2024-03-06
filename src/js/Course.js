@@ -45,6 +45,8 @@ export default class Course extends Phaser.Scene {
     this.load.image('img_basket', "src/assets/image_course/basket.png")
     this.load.image('img_talon', "src/assets/image_course/chaussure_talon.png")
     this.load.image('img_claquette', "src/assets/image_course/claquette.png")
+    this.load.image("level_completed", "src/assets/finished_line.png")
+    
   }
 
   create() {
@@ -65,6 +67,7 @@ export default class Course extends Phaser.Scene {
     const calque1 = map.createLayer("arrière plan", [tileset3]);
     this.calque2 = map.createLayer("terre", [tileset1, tileset7, tileset8, tileset9, tileset10, tileset2, tileset5]);
     const calque3 = map.createLayer("arbres et buissons", [tileset11, tileset4, tileset6]);
+
 
     //creation des colisions 
     this.calque2.setCollisionByProperty({ estSolide: true });

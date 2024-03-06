@@ -14,7 +14,6 @@ export default class menu extends Phaser.Scene {
       this.load.image("logo","src/assets/image menu/logo.png");
       this.load.image("img_clavier", "src/assets/image menu/keyboard.png");
       this.load.image("imageBoutonPlay", "src/assets/image menu/black_play.png");
-      //this.load.image("imageBoutonConfig", "src/assets/image menu/black_config.png"); 
       this.load.image("imageMusiqueOn", "src/assets/image menu/black_musicOn.png");
       this.load.image("imageMusiqueOff", "src/assets/image menu/black_MusicOff.png");
       this.load.image("imageBoutonSetting", "src/assets/image menu/settings_button.png");
@@ -55,7 +54,7 @@ export default class menu extends Phaser.Scene {
       //Cas ou la souris clique sur le bouton play :
       bouton_play.on("pointerup", () => {
         bruit_de_click.play();
-        this.scene.start("velo");
+        this.scene.start("course");
       });
 
 

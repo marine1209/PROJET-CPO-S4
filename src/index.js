@@ -2,7 +2,7 @@ import Course from "/src/js/Course.js";
 import velo from "/src/js/velo.js"; 
 import natation from "/src/js/natation.js";
 import menu from "/src/js/menu.js";
-
+//import acceuilCourse from "/src/js/acceuilCourse.js"; 
 var config = {
   type: Phaser.AUTO,
   width: 800, // largeur en pixels
@@ -19,7 +19,7 @@ var config = {
     }
   
   },
-  scene: [menu, velo, natation, Course] 
+  scene: [menu,Course, velo, natation ] 
   
 };
 
