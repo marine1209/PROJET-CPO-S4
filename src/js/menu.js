@@ -54,7 +54,7 @@ export default class menu extends Phaser.Scene {
       //Cas ou la souris clique sur le bouton play :
       bouton_play.on("pointerup", () => {
         bruit_de_click.play();
-        this.scene.start("course");
+        this.scene.start("transition1");
       });
 
 

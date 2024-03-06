@@ -8,6 +8,7 @@ var monTimer;
 var groupe_bouteilles;
 var gameOver = false;
 var ramassageEnCours; 
+//var boutonNext;
 
 export default class Course extends Phaser.Scene {
 
@@ -21,6 +22,7 @@ export default class Course extends Phaser.Scene {
 
   preload() {
     //chargement des images
+    this.load.image("level_completed", "src/assets/finished_line.png");
     this.load.image("tuile_terre1", "src/assets/image_course/1.png");
     this.load.image("tuile_terre2", "src/assets/image_course/2.png");
     this.load.image("tuile_terre3", "src/assets/image_course/3.png");
@@ -140,6 +142,10 @@ export default class Course extends Phaser.Scene {
     const basket = this.groupe_chaussures.create(100, 400, 'img_basket');
     const talon = this.groupe_chaussures.create(200, 400, 'img_talon');
     const claquette = this.groupe_chaussures.create(300, 400, 'img_claquette');
+    
+    this.fin =this.physics.add.staticSprite(200,400,"level_completed");
+    //boutonNext = this.input.keyboard.addKey('A'); 
+    
   }
   update() {
  
@@ -169,6 +175,13 @@ export default class Course extends Phaser.Scene {
           }
       });
     }
+    /*
+    if (Phaser.Input.Keyboard.JustDown(clavier.boutonNext) == true && (this.physics.overlap(player, this.fin)) ) {
+    
+      this.scene.start("accueil_velo");
+ 
+ }*/ 
+    
    //ramasser les bouteilles
     this.physics.add.overlap(player, groupe_bouteilles, this.ramasserBouteille, null, this);
         if (gameOver) {
