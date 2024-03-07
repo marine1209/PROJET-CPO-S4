@@ -5,6 +5,7 @@ import menu from "/src/js/menu.js";
 import transition1 from "/src/js/transition1.js";
 import accueil_course from "/src/js/accueil_course.js";
 import accueil_velo from "/src/js/accueil_velo.js";
+import accueil_victoire from "/src/js/accueil_victoire.js";
 
 
 var config = {
@@ -23,8 +24,8 @@ var config = {
     }
   
   },
-  scene: [menu,transition1, natation, accueil_course, Course,accueil_velo,velo ] 
-  //scene: [menu, natation ] 
+  scene: [menu,transition1, natation, accueil_course, Course,accueil_velo,velo, accueil_victoire ] 
+  
   
   
 };

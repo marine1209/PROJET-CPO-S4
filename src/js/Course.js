@@ -25,7 +25,7 @@ export default class Course extends Phaser.Scene {
 
   preload() {
     //chargement des images et musiques
-    this.load.audio('musique_menu', 'src/assets/musique/musiqueIntro.OGG');  
+    this.load.audio('musique_course', 'src/assets/musique/running.mp3');  
     this.load.audio('click_sound', 'src/assets/musique/zipclick.flac');
     this.load.image("level_completed", "src/assets/finished_line.png");
     this.load.image("tuile_terre1", "src/assets/image_course/1.png");
@@ -147,9 +147,9 @@ export default class Course extends Phaser.Scene {
     // overlap eau
     this.calque2.setTileIndexCallback([61,62,63,64,65,66,67,68,69,70,71,72], this.gameOver, this);
     this.physics.add.overlap(player, this.calque2);
-    boutonNext=this.input.keyboard.addKey('A'); 
+    boutonNext=this.input.keyboard.addKey('A'); //bouton pour franchir la ligne d'arriver
 
-    musique_de_fond = this.sound.add('musique_menu'); 
+    musique_de_fond = this.sound.add('musique_course'); 
     musique_de_fond.play();
     bruit_de_click=this.sound.add("click_sound");
     //on ajoute un bouton de clic, nommé bouton_play
@@ -194,6 +194,7 @@ export default class Course extends Phaser.Scene {
     }
     
     if((Phaser.Input.Keyboard.JustDown(boutonNext))&&(this.physics.overlap(player, this.fin))){
+      musique_de_fond.stop();
       this.scene.start("accueil_velo");
     } 
 

@@ -6,15 +6,19 @@ var bouton_disparaitre;
 var bouton;
 var bouton2;
 var score=0;
+var musique_de_fond;
+var bruit_de_click;
 var plateforme_descendante;
 var plateforme_mobile;;
 var zone_texte_score;
 var tween_mouvement;
 var tween_mouvement2;
 var levier;
+var fin;
 var mouvStone;
 var boutonNext;
 var plateforme3; 
+var boutonPlateforme;
 export default class velo extends Phaser.Scene {
 
   constructor() {
@@ -25,6 +29,9 @@ export default class velo extends Phaser.Scene {
 
   preload() {
     //chargement des images
+    this.load.image("level_completed", "src/assets/finished_line.png");
+    this.load.audio('musique_velo', 'src/assets/musique/music_bike.mp3');  
+    this.load.audio('click_sound', 'src/assets/musique/zipclick.flac');
     this.load.image("img_levierOn", "src/assets/image_velo/levier_on.png");
     this.load.image("img_levierOff", "src/assets/image_velo/levier_off.png");
     this.load.image("img_bouton", "src/assets/image_velo/bouton_rose.png");
@@ -76,6 +83,7 @@ export default class velo extends Phaser.Scene {
     const tileset10 = map.addTilesetImage("terre3", "tuile_terre5");
     const calque1 = map.createLayer("arrière plan", [tileset3]);
     const calque2 = map.createLayer("terre", [tileset1, tileset7, tileset8, tileset9, tileset10, tileset2, tileset5]);
+    this.fin =this.physics.add.staticSprite(3000,580,"level_completed");
 
     //creation des colisions 
     calque2.setCollisionByProperty({ estSolide: true });
@@ -119,11 +127,11 @@ export default class velo extends Phaser.Scene {
     this.groupe_velo = this.physics.add.group();
     const selle = this.groupe_velo.create(160, 0, "img_selle");
     const roueAV = this.groupe_velo.create(1300, 0, "img_roueAV");
-    const roueAR = this.groupe_velo.create(2500, 0, "img_roueAR");
+    const roueAR = this.groupe_velo.create(2000, 0, "img_roueAR");
     const guidon = this.groupe_velo.create(2600, 0, "img_guidon");
     const pedale = this.groupe_velo.create(1430, 0, 'img_pedale');
     this.physics.add.collider(this.groupe_velo, calque2);
-
+    
     //création des éléments qui cachent le vélo 
     this.groupe_buissons = this.physics.add.group()
     const buisson1 = this.groupe_buissons.create(160, 95, "buisson1");
@@ -139,7 +147,7 @@ export default class velo extends Phaser.Scene {
 
     //création bouton rose et du score
     bouton2 = this.physics.add.staticSprite(1200, 382, "img_bouton");
-this.physics.add.collider(bouton2, calque2);
+    this.physics.add.collider(bouton2, calque2);
 
     bouton2.active = false;
 
@@ -151,11 +159,11 @@ this.physics.add.collider(bouton2, calque2);
     this.physics.add.overlap(player, this.groupe_velo, this.ramasserVelo, null, this);
 
 
-    plateforme3 = this.physics.add.image(2500, 150, "tuile_terre2");
+    plateforme3 = this.physics.add.image(2500, 200, "tuile_terre2");
     this.physics.add.collider(player, plateforme3);
     plateforme3.body.allowGravity = false;
-
-    plateforme_descendante = this.physics.add.sprite(1200, 200, "img_BluePlatform");
+   
+    plateforme_descendante = this.physics.add.sprite(1200, 100, "tuile_terre2");
     this.physics.add.collider(player, plateforme_descendante);
     plateforme_descendante.body.allowGravity = false;
     plateforme_descendante.body.immovable = true;
@@ -176,7 +184,7 @@ this.physics.add.collider(bouton2, calque2);
     bouton.active = false;
     this.physics.add.collider(bouton, calque2);
 
-    plateforme_mobile = this.physics.add.sprite(350, 450, "img_BluePlatform");
+    plateforme_mobile = this.physics.add.sprite(400, 450, "tuile_terre2");
     this.physics.add.collider(player, plateforme_mobile);
     plateforme_mobile.body.allowGravity = false;
     plateforme_mobile.body.immovable = true;
@@ -197,8 +205,40 @@ this.physics.add.collider(bouton2, calque2);
     levier = this.physics.add.staticSprite(700, 538, "img_levier");
     levier.active = false;
     this.physics.add.collider(levier, calque2);
-    boutonNext=this.input.keyboard.addKey('A');
     
+    //boutons associés à des touches pour activer le levier et les boutons
+    boutonNext=this.input.keyboard.addKey('A'); //bouton pour franchir la ligne d'arriver
+    boutonPlateforme=this.input.keyboard.addKey('S');// bouton pour activer la plateforme descendante
+    
+    musique_de_fond = this.sound.add('musique_velo'); 
+    musique_de_fond.play();
+    bruit_de_click=this.sound.add("click_sound");
+
+
+    //on ajoute un bouton de musique
+    var bouton_musiqueOn = this.add.image(700, 100, "imageMusiqueOn").setDepth(1).setScrollFactor(0);
+    bouton_musiqueOn.setInteractive();
+
+
+    //paramétrage du bouton musiqueON
+    bouton_musiqueOn.on("pointerover", () => {
+      bouton_musiqueOn.setScale(1.2);
+      //bouton_musiqueOff.setVisible(false);
+    });
+    bouton_musiqueOn.on('pointerout', ()=> {
+      bouton_musiqueOn.setScale(1);
+    });
+    bouton_musiqueOn.on("pointerup", () => {
+      bruit_de_click.play();
+      if (bouton_musiqueOn.texture.key === "imageMusiqueOn") {
+        bouton_musiqueOn.setTexture("imageMusiqueOff");
+        musique_de_fond.stop(); 
+    } else if (bouton_musiqueOn.texture.key === "imageMusiqueOff") {
+        bouton_musiqueOn.setTexture("imageMusiqueOn");
+        
+        musique_de_fond.play(); 
+    }
+    });
 
   }
 
@@ -221,9 +261,16 @@ this.physics.add.collider(bouton2, calque2);
       player.anims.play('anim_face', true);
     }
     
-    // activation du levier : on est dessus et on appuie sur espace
+    if((Phaser.Input.Keyboard.JustDown(boutonNext))&&(this.physics.overlap(player, this.fin))){
+      musique_de_fond.stop();
+      this.scene.start("accueil_victoire");
+      this.score=0;
+    } 
+
+
+    // activation du levier de la plateforme mobile : on est dessus et on appuie sur espace
      if (
-      Phaser.Input.Keyboard.JustDown(boutonNext) == true &&
+      Phaser.Input.Keyboard.JustDown(boutonPlateforme) == true &&
       this.physics.overlap(player, levier) == true
     ) {
       // si le levier etait activé, on le désactive et stoppe la plateforme
@@ -278,9 +325,9 @@ this.physics.add.collider(bouton2, calque2);
       //this.appuyerSurBouton(player, groupe_buissons);
     }
 
-    if (this.score==5) {
+    /*if (this.score==5) {
       this.finDeJeu();
-    }
+    }*/
   }
 
   gameOver() {

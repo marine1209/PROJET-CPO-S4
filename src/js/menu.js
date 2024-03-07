@@ -33,7 +33,7 @@ export default class menu extends Phaser.Scene {
       bruit_de_click=this.sound.add("click_sound");
       //on ajoute un bouton de clic, nommé bouton_play
       var bouton_play = this.add.image(400, 300, "imageBoutonPlay").setDepth(1);
-      var bouton_musiqueOn = this.add.image(550, 300, "imageMusiqueOn").setDepth(1);
+      var bouton_musiqueOff = this.add.image(550, 300, "imageMusiqueOff").setDepth(1);
       var bouton_reglage = this.add.image(250, 300, "imageBoutonSetting").setDepth(1);
       
       
@@ -41,7 +41,7 @@ export default class menu extends Phaser.Scene {
       //=========================================================
       //on rend le bouton interratif
       bouton_play.setInteractive();
-      bouton_musiqueOn.setInteractive();
+      bouton_musiqueOff.setInteractive();
       bouton_reglage.setInteractive();
 
       //paramétrage du bouton play
@@ -61,22 +61,22 @@ export default class menu extends Phaser.Scene {
       musique_de_fond.stop();
 
       //paramétrage du bouton musiqueON
-      bouton_musiqueOn.on("pointerover", () => {
-        bouton_musiqueOn.setScale(1.2);
+      bouton_musiqueOff.on("pointerover", () => {
+        bouton_musiqueOff.setScale(1.2);
         //bouton_musiqueOff.setVisible(false);
       });
-      bouton_musiqueOn.on('pointerout', ()=> {
-        bouton_musiqueOn.setScale(1);
+      bouton_musiqueOff.on('pointerout', ()=> {
+        bouton_musiqueOff.setScale(1);
       });
-      bouton_musiqueOn.on("pointerup", () => {
+      bouton_musiqueOff.on("pointerup", () => {
         bruit_de_click.play();
-        if (bouton_musiqueOn.texture.key === "imageMusiqueOn") {
-          bouton_musiqueOn.setTexture("imageMusiqueOff");
-          musique_de_fond.stop(); 
-      } else if (bouton_musiqueOn.texture.key === "imageMusiqueOff") {
-          bouton_musiqueOn.setTexture("imageMusiqueOn");
-          
+        if (bouton_musiqueOff.texture.key === "imageMusiqueOff") {
+          bouton_musiqueOff.setTexture("imageMusiqueOn");
           musique_de_fond.play(); 
+      } else if (bouton_musiqueOff.texture.key === "imageMusiqueOn") {
+          bouton_musiqueOff.setTexture("imageMusiqueOff");
+          
+          musique_de_fond.stop(); 
       }
       });
 

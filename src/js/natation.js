@@ -225,7 +225,7 @@ update() {
     return ;
   }
   if (Phaser.Input.Keyboard.JustDown(clavier.space) == true && (this.physics.overlap(player, this.fin)) ) {
-    
+      musique_de_fond.stop();
        this.scene.start("accueil_course");
   
   } 
