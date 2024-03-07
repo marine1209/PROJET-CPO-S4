@@ -202,7 +202,7 @@ export default class velo extends Phaser.Scene {
       repeat: -1 // répétition infinie 
     });
 
-    levier = this.physics.add.staticSprite(700, 538, "img_levier");
+    levier = this.physics.add.staticSprite(700, 500, "img_levier");
     levier.active = false;
     this.physics.add.collider(levier, calque2);
     

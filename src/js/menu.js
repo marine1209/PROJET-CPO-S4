@@ -56,6 +56,7 @@ export default class menu extends Phaser.Scene {
       bouton_play.on("pointerup", () => {
         bruit_de_click.play();
         this.scene.start("transition1");
+        musique_de_fond.stop();
       });
 
       musique_de_fond.stop();
@@ -73,6 +74,7 @@ export default class menu extends Phaser.Scene {
         if (bouton_musiqueOff.texture.key === "imageMusiqueOff") {
           bouton_musiqueOff.setTexture("imageMusiqueOn");
           musique_de_fond.play(); 
+          
       } else if (bouton_musiqueOff.texture.key === "imageMusiqueOn") {
           bouton_musiqueOff.setTexture("imageMusiqueOff");
           
