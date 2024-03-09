@@ -262,9 +262,12 @@ export default class velo extends Phaser.Scene {
     }
     
     if((Phaser.Input.Keyboard.JustDown(boutonNext))&&(this.physics.overlap(player, this.fin))){
+      
+      if (score==5){
       musique_de_fond.stop();
       this.scene.start("accueil_victoire");
-      this.score=0;
+      score=0;
+      }
     } 
 
 
